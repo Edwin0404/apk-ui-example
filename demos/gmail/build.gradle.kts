@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.androidx.material3)
     /* --- */
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.material)
     /* --- */
 
     testImplementation(libs.junit)
