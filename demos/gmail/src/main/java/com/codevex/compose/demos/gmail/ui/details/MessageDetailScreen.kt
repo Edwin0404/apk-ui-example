@@ -15,13 +15,11 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
-import com.codevex.compose.demos.gmail.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessageDetailScreen(navController: NavHostController) {
+fun MessageDetailScreen(email: Email, navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -32,36 +30,25 @@ fun MessageDetailScreen(navController: NavHostController) {
                 ),
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = null
-                        )
+                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, null)
                     }
                 },
                 actions = {
                     IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Outlined.Archive,
-                            contentDescription = stringResource(id = R.string.cd_back)
-                        )
+                        Icon(Icons.Outlined.Archive, null)
                     }
                     IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Outlined.Delete,
-                            contentDescription = null
-                        )
+                        Icon(Icons.Outlined.Delete, null)
                     }
                     IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Outlined.Mail,
-                            contentDescription = null
-                        )
+                        Icon(Icons.Outlined.Mail, null)
                     }
                 }
             )
         },
         content = { paddingValues ->
             MessageDetailBody(
+                email = email,
                 modifier = Modifier.padding(paddingValues),
             )
         }

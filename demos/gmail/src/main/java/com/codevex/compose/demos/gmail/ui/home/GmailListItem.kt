@@ -35,25 +35,25 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.codevex.compose.demos.gmail.data.DemoDataProvider
-import com.codevex.compose.demos.gmail.data.model.Tweet
+import com.codevex.compose.demos.gmail.ui.details.Email
+import com.github.javafaker.Faker
 
 @Composable
-fun GmailListItem(item: Tweet, clickListener: (Tweet) -> Unit) {
+fun GmailListItem(item: Email, clickListener: () -> Unit) {
 
     ConstraintLayout(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .fillMaxWidth()
-            .clickable { clickListener(item) }
+            .clickable { clickListener() }
             .padding(horizontal = 12.dp, vertical = 4.dp)
     ) {
-        var stared by remember(item.id) { mutableStateOf(false) }
+        var stared by remember(item.uid) { mutableStateOf(item.isFavourite) }
         val (image, title, subtitle, source, starButton, time) = createRefs()
         createVerticalChain(title, subtitle, source, chainStyle = ChainStyle.Packed)
 
         Image(
-            painter = painterResource(id = item.authorImageId),
+            painter = painterResource(item.from.avatar),
             contentScale = ContentScale.Crop,
             contentDescription = null,
             modifier = Modifier
@@ -65,7 +65,7 @@ fun GmailListItem(item: Tweet, clickListener: (Tweet) -> Unit) {
                 }
         )
         Text(
-            text = item.author,
+            text = item.from.name,
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.constrainAs(title) {
                 start.linkTo(image.end, 16.dp)
@@ -73,7 +73,7 @@ fun GmailListItem(item: Tweet, clickListener: (Tweet) -> Unit) {
             }
         )
         Text(
-            text = "5 sept",
+            text = item.date,
             style = MaterialTheme.typography.titleLarge.copy(fontSize = 12.sp),
             modifier = Modifier.constrainAs(time) {
                 end.linkTo(parent.end, margin = 8.dp)
@@ -81,7 +81,7 @@ fun GmailListItem(item: Tweet, clickListener: (Tweet) -> Unit) {
             }
         )
         Text(
-            text = item.source,
+            text = item.subject,
             style = MaterialTheme.typography.titleLarge.copy(fontSize = 14.sp),
             modifier = Modifier.constrainAs(subtitle) {
                 start.linkTo(image.end, 16.dp)
@@ -89,7 +89,7 @@ fun GmailListItem(item: Tweet, clickListener: (Tweet) -> Unit) {
             }
         )
         Text(
-            text = item.text,
+            text = Faker().lorem().sentence(25),
             style = MaterialTheme.typography.bodySmall,
             maxLines = 2,
             modifier = Modifier
@@ -145,8 +145,5 @@ fun GmailListActionItems(modifier: Modifier) {
 @Composable
 @Preview
 fun PreviewGmailItem() {
-    val item = DemoDataProvider.tweet
-    GmailListItem(item = item) {
-
-    }
+    GmailListItem(item = Email()) {}
 }

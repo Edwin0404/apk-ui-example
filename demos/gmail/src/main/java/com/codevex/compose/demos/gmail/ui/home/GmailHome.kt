@@ -63,10 +63,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.codevex.compose.demos.gmail.R
-import com.codevex.compose.demos.gmail.data.DemoDataProvider
 import com.codevex.compose.demos.gmail.ui.AnimatingFabContent
 import com.codevex.compose.demos.gmail.ui.Route
 import com.codevex.compose.demos.gmail.ui.create.CreateMessageScreen
+import com.codevex.compose.demos.gmail.ui.details.Email
 import com.codevex.compose.demos.gmail.ui.details.MessageDetailScreen
 import com.codevex.compose.demos.gmail.ui.theme.graySurface
 import com.codevex.compose.demos.gmail.ui.theme.green500
@@ -80,16 +80,24 @@ import com.kiwi.navigationcompose.typed.navigate as kiwiNavigate
 @Composable
 fun GmailScreen() {
     val navController = rememberNavController()
+    val emails = (0..20).map { Email() }
+
     NavHost(
         navController = navController,
         startDestination = createRoutePattern<Route.Home>()
     ) {
         composable<Route.Home> {
-            GmailHome(navController = navController)
+            GmailHome(
+                navController = navController,
+                emails = emails
+            )
         }
 
         composable<Route.Detail> {
-            MessageDetailScreen(navController = navController)
+            MessageDetailScreen(
+                navController = navController,
+                email = emails.first { it.uid == emailUID }
+            )
         }
 
         composable<Route.Create> {
@@ -100,7 +108,10 @@ fun GmailScreen() {
 
 @ExperimentalSerializationApi
 @Composable
-fun GmailHome(navController: NavHostController) {
+fun GmailHome(
+    navController: NavHostController,
+    emails: List<Email>,
+) {
 
     val scaffoldState = rememberScaffoldState()
     val fabExpandState = remember { mutableStateOf(false) }
@@ -121,6 +132,7 @@ fun GmailHome(navController: NavHostController) {
                 navController = navController,
                 showUserDialog = showUserDialog,
                 modifier = Modifier.padding(paddingValues),
+                emails = emails
             )
         },
         bottomBar = {
@@ -227,10 +239,8 @@ fun GmailContent(
     navController: NavHostController,
     showUserDialog: MutableState<Boolean>,
     modifier: Modifier = Modifier,
+    emails: List<Email>,
 ) {
-
-    val tweets = remember { DemoDataProvider.tweetList }
-
     val lazyListState = rememberLazyListState()
 
     var offsetY by remember { mutableIntStateOf(0) }
@@ -285,14 +295,14 @@ fun GmailContent(
                 Spacer(modifier = Modifier.height(72.dp))
             }
 
-            items(tweets) {
-                val visible = remember(it.id) { mutableStateOf(true) }
+            items(emails) {
+                val visible = remember(it.uid) { mutableStateOf(true) }
 
                 AnimatedVisibility(visible = visible.value) {
                     Box(modifier = Modifier.background(green500)) {
                         GmailListActionItems(modifier = Modifier.align(Alignment.CenterEnd))
                         GmailListItem(it) {
-                            navController.kiwiNavigate(Route.Detail)
+                            navController.kiwiNavigate(Route.Detail(it.uid))
                         }
                     }
                 }

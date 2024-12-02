@@ -10,8 +10,7 @@ sealed interface Route : Destination {
     data object Home : Route
 
     @Serializable
-    data object Detail : Route
-
+    data class Detail(val emailUID: String) : Route
     @Serializable
     data object Create : Route
 }

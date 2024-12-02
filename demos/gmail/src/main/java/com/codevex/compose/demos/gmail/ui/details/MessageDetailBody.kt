@@ -70,8 +70,9 @@ data class Person(
 )
 
 data class Email(
+    val uid: String = Faker().idNumber().valid(),
     val subject: String = Faker().lorem().sentence(),
-    val date: String = Faker().date().past(1, TimeUnit.DAYS).toString(),
+    val date: String = Faker().date().past(10, TimeUnit.DAYS).toString(),
     val isFavourite: Boolean = Faker().bool().bool(),
     val from: Person = Person(),
     val to: Person = Person(),
@@ -89,11 +90,13 @@ data class Email(
 
 @Preview(showBackground = true)
 @Composable
-fun MessageDetailBody(
-    email: Email = Email(),
-    modifier: Modifier = Modifier,
-) {
-    var showExpandedEmailInfo by remember { mutableStateOf(true) }
+fun MessageDetailBodyPreview() {
+    MessageDetailBody(email = Email())
+}
+
+@Composable
+fun MessageDetailBody(email: Email, modifier: Modifier = Modifier) {
+    var showExpandedEmailInfo by remember { mutableStateOf(false) }
     var isFavourite by remember { mutableStateOf(email.isFavourite) }
 
     LazyColumn(modifier = modifier.fillMaxWidth()) {
@@ -184,7 +187,7 @@ fun MessageDetailBody(
             }
         }
         item {
-            val body = LoadAssetFileContent(email.body)
+            val body = loadAssetFileContent(email.body)
             AndroidView(
                 factory = {
                     WebView(it).apply {
@@ -254,7 +257,7 @@ fun EmailText(email: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun LoadAssetFileContent(fileName: String): String {
+private fun loadAssetFileContent(fileName: String): String {
     val context = LocalContext.current
     return remember(fileName) {
         context.assets.open(fileName).bufferedReader().use { it.readText() }
