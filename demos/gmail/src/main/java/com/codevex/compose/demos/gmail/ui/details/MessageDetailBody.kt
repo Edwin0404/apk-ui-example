@@ -75,6 +75,16 @@ data class Email(
     val isFavourite: Boolean = Faker().bool().bool(),
     val from: Person = Person(),
     val to: Person = Person(),
+    val body: String = listOf(
+        "email_body_01.html",
+        "email_body_02.html",
+        "email_body_03.html",
+        "email_body_04.html",
+        "email_body_05.html",
+        "email_body_06.html",
+        "email_body_07.html",
+        "email_body_08.html",
+    ).random(),
 )
 
 @Preview(showBackground = true)
@@ -174,7 +184,7 @@ fun MessageDetailBody(
             }
         }
         item {
-            val body = LoadAssetFileContent("email_body_02.html")
+            val body = LoadAssetFileContent(email.body)
             AndroidView(
                 factory = {
                     WebView(it).apply {
