@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout.compose.android)
     implementation(libs.kiwi.navigation.core)
     implementation(libs.kotlinx.serialization.core)
+    implementation(libs.javafaker)
     /* --- */
 
     testImplementation(libs.junit)

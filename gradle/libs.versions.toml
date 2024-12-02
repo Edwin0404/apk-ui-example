@@ -15,6 +15,7 @@ constraintlayoutComposeAndroid = "1.1.0"
 kiwiCore = "0.10.0"
 kotlinxSerializationCore = "1.7.3"
 kotlinxSerializationPlugin = "2.0.21"
+javafaker = "1.0.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,6 +42,7 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 androidx-constraintlayout-compose-android = { group = "androidx.constraintlayout", name = "constraintlayout-compose-android", version.ref = "constraintlayoutComposeAndroid" }
 kiwi-navigation-core = { group = "com.kiwi.navigation-compose.typed", name = "core", version.ref = "kiwiCore" }
 kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
+javafaker = { group = "com.github.javafaker", name = "javafaker", version.ref = "javafaker" }
 # END
 
 [plugins]

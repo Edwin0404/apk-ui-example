@@ -76,7 +76,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlin.math.absoluteValue
 import com.kiwi.navigationcompose.typed.navigate as kiwiNavigate
 
-@ExperimentalSerializationApi
+@OptIn(ExperimentalSerializationApi::class)
 @Composable
 fun GmailScreen() {
     val navController = rememberNavController()
@@ -341,7 +341,7 @@ fun UserEmailDialog(showUserDialog: MutableState<Boolean>) {
 
                     }
 
-                    GmailUserEmail(R.drawable.p1, "Subash Aryc", "subash@gmail.com", 2)
+                    GmailUserEmail(R.drawable.avatar_01, "Subash Aryc", "subash@gmail.com", 2)
 
                     Text(
                         text = "Manage your Google Account",
@@ -362,13 +362,13 @@ fun UserEmailDialog(showUserDialog: MutableState<Boolean>) {
                     )
 
                     GmailUserEmail(
-                        imageId = R.drawable.p2,
+                        imageId = R.drawable.avatar_02,
                         name = "Subash ",
                         email = "aryal.subash@yahoo.com",
                         badgeCount = 39
                     )
                     GmailUserEmail(
-                        imageId = R.drawable.p2,
+                        imageId = R.drawable.avatar_02,
                         name = "Subash Zi ",
                         email = "subashz@gmail.com",
                         badgeCount = 10

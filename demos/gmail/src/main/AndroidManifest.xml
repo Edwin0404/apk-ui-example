@@ -3,7 +3,7 @@
 
     <application>
         <activity
-            android:name=".DemoGmailActivity"
+            android:name=".GmailActivity"
             android:exported="true"
             android:theme="@style/Theme.ApkUISample" />
     </application>

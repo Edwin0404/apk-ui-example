@@ -131,7 +131,7 @@ object DemoDataProvider {
             id = 2,
             author = "Google",
             handle = "@google",
-            authorImageId = R.drawable.p1,
+            authorImageId = R.drawable.avatar_01,
             tweetImageId = R.drawable.food16,
             time = "11m"
         ),
@@ -139,21 +139,21 @@ object DemoDataProvider {
             id = 3,
             author = "Amazon",
             handle = "@Amazon",
-            authorImageId = R.drawable.p2,
+            authorImageId = R.drawable.avatar_02,
             time = "1h"
         ),
         tweet.copy(
             id = 4,
             author = "Facebook",
             handle = "@Facebook",
-            authorImageId = R.drawable.p3,
+            authorImageId = R.drawable.avatar_03,
             time = "1h"
         ),
         tweet.copy(
             id = 5,
             author = "Instagram",
             handle = "@Instagram",
-            authorImageId = R.drawable.p4,
+            authorImageId = R.drawable.avatar_04,
             tweetImageId = R.drawable.food15,
             time = "11m"
         ),
@@ -161,7 +161,7 @@ object DemoDataProvider {
             id = 6,
             author = "Twitter",
             handle = "@Twitter",
-            authorImageId = R.drawable.p5,
+            authorImageId = R.drawable.avatar_05,
             tweetImageId = R.drawable.food3,
             time = "11m"
         ),
@@ -169,7 +169,7 @@ object DemoDataProvider {
             id = 7,
             author = "Netflix",
             handle = "@Netflix",
-            authorImageId = R.drawable.p6,
+            authorImageId = R.drawable.avatar_06,
             tweetImageId = R.drawable.food4,
             time = "11m"
         ),
@@ -177,35 +177,35 @@ object DemoDataProvider {
             id = 8,
             author = "Tesla",
             handle = "@Tesla",
-            authorImageId = R.drawable.p7,
+            authorImageId = R.drawable.avatar_07,
             time = "1h"
         ),
         tweet.copy(
             id = 9,
             author = "Microsoft",
             handle = "@Microsoft",
-            authorImageId = R.drawable.p8,
+            authorImageId = R.drawable.avatar_08,
             time = "1h"
         ),
         tweet.copy(
             id = 3,
             author = "Tencent",
             handle = "@Tencent",
-            authorImageId = R.drawable.p9,
+            authorImageId = R.drawable.avatar_09,
             time = "1h"
         ),
         tweet.copy(
             id = 4,
             author = "Snapchat",
             handle = "@Snapchat",
-            authorImageId = R.drawable.p10,
+            authorImageId = R.drawable.avatar_10,
             time = "1h"
         ),
         tweet.copy(
             id = 5,
             author = "Snapchat",
             handle = "@Snapchat",
-            authorImageId = R.drawable.p11,
+            authorImageId = R.drawable.avatar_11,
             tweetImageId = R.drawable.food5,
             time = "11m"
         ),
@@ -213,7 +213,7 @@ object DemoDataProvider {
             id = 6,
             author = "Tiktok",
             handle = "@Tiktok",
-            authorImageId = R.drawable.p1,
+            authorImageId = R.drawable.avatar_01,
             tweetImageId = R.drawable.food6,
             time = "11m"
         ),
@@ -221,7 +221,7 @@ object DemoDataProvider {
             id = 7,
             author = "Samsung",
             handle = "@Samsung",
-            authorImageId = R.drawable.p2,
+            authorImageId = R.drawable.avatar_02,
             tweetImageId = R.drawable.food7,
             time = "11m"
         ),
@@ -229,35 +229,35 @@ object DemoDataProvider {
             id = 8,
             author = "Youtube",
             handle = "@Youtube",
-            authorImageId = R.drawable.p3,
+            authorImageId = R.drawable.avatar_03,
             time = "1h"
         ),
         tweet.copy(
             id = 9,
             author = "Gmail",
             handle = "@Gmail",
-            authorImageId = R.drawable.p4,
+            authorImageId = R.drawable.avatar_04,
             time = "1h"
         ),
         tweet.copy(
             id = 3,
             author = "Android",
             handle = "@Android",
-            authorImageId = R.drawable.p5,
+            authorImageId = R.drawable.avatar_05,
             time = "1h"
         ),
         tweet.copy(
             id = 4,
             author = "Whatsapp",
             handle = "@Whatsapp",
-            authorImageId = R.drawable.p6,
+            authorImageId = R.drawable.avatar_06,
             time = "1h"
         ),
         tweet.copy(
             id = 5,
             author = "Telegram",
             handle = "@Telegram",
-            authorImageId = R.drawable.p7,
+            authorImageId = R.drawable.avatar_07,
             tweetImageId = R.drawable.food8,
             time = "11m"
         ),
@@ -265,7 +265,7 @@ object DemoDataProvider {
             id = 6,
             author = "Spotify",
             handle = "@Spotify",
-            authorImageId = R.drawable.p8,
+            authorImageId = R.drawable.avatar_08,
             tweetImageId = R.drawable.food9,
             time = "11m"
         ),
@@ -273,7 +273,7 @@ object DemoDataProvider {
             id = 7,
             author = "WeChat",
             handle = "@WeChat",
-            authorImageId = R.drawable.p9,
+            authorImageId = R.drawable.avatar_09,
             tweetImageId = R.drawable.food10,
             time = "11m"
         ),
@@ -281,21 +281,21 @@ object DemoDataProvider {
             id = 8,
             author = "Airbnb",
             handle = "@Airbnb",
-            authorImageId = R.drawable.p10,
+            authorImageId = R.drawable.avatar_10,
             time = "1h"
         ),
         tweet.copy(
             id = 9,
             author = "LinkedIn",
             handle = "@LinkedIn",
-            authorImageId = R.drawable.p11,
+            authorImageId = R.drawable.avatar_11,
             time = "1h"
         ),
         tweet.copy(
             id = 6,
             author = "Shazam",
             handle = "@Shazam",
-            authorImageId = R.drawable.p8,
+            authorImageId = R.drawable.avatar_08,
             tweetImageId = R.drawable.food11,
             time = "11m"
         ),
@@ -303,7 +303,7 @@ object DemoDataProvider {
             id = 7,
             author = "Chrome",
             handle = "@Chrome",
-            authorImageId = R.drawable.p9,
+            authorImageId = R.drawable.avatar_09,
             tweetImageId = R.drawable.food12,
             time = "11m"
         ),
@@ -311,7 +311,7 @@ object DemoDataProvider {
             id = 6,
             author = "Safari",
             handle = "@Safari",
-            authorImageId = R.drawable.p8,
+            authorImageId = R.drawable.avatar_08,
             tweetImageId = R.drawable.food13,
             time = "11m"
         ),
@@ -319,7 +319,7 @@ object DemoDataProvider {
             id = 7,
             author = "Disney",
             handle = "@Disney",
-            authorImageId = R.drawable.p9,
+            authorImageId = R.drawable.avatar_09,
             tweetImageId = R.drawable.food14,
             time = "11m"
         )

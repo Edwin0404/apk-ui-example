@@ -104,7 +104,7 @@ fun SearchLayout(
         }
 
         Image(
-            painter = painterResource(id = R.drawable.p3),
+            painter = painterResource(id = R.drawable.avatar_03),
             contentDescription = stringResource(id = R.string.cd_gmail_profile),
             modifier = Modifier
                 .padding(horizontal = 8.dp)

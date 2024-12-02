@@ -8,11 +8,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import com.codevex.compose.demos.gmail.ui.home.GmailScreen
 import com.codevex.compose.demos.gmail.ui.theme.GmailTheme
-import kotlinx.serialization.ExperimentalSerializationApi
 
-class DemoGmailActivity : ComponentActivity() {
+class GmailActivity : ComponentActivity() {
 
-    @ExperimentalSerializationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
@@ -25,7 +23,6 @@ class DemoGmailActivity : ComponentActivity() {
     }
 }
 
-@ExperimentalSerializationApi
 @Preview
 @Composable
 fun ActivityPreview() {

@@ -13,7 +13,7 @@
         android:theme="@style/Theme.ApkUISample"
         tools:targetApi="31">
         <activity
-            android:name="com.codevex.compose.demos.gmail.DemoGmailActivity"
+            android:name="com.codevex.compose.demos.gmail.GmailActivity"
             android:exported="true"
             android:theme="@style/Theme.ApkUISample">
             <intent-filter>
