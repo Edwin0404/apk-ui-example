@@ -1,5 +1,4 @@
-package com.guru.composecookbook.gmail.data
-
+package com.codevex.compose.demos.gmail.data
 
 var sampleMessage = """
     

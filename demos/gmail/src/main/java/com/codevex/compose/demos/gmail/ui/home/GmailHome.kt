@@ -1,4 +1,4 @@
-package com.guru.composecookbook.gmail.ui.home
+package com.codevex.compose.demos.gmail.ui.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -42,6 +42,7 @@ import androidx.compose.material.icons.outlined.Mail
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -60,15 +61,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.guru.composecookbook.data.DemoDataProvider
-import com.guru.composecookbook.fab.AnimatingFabContent
-import com.guru.composecookbook.gmail.R
-import com.guru.composecookbook.gmail.ui.create.CreateMessageScreen
-import com.guru.composecookbook.gmail.ui.details.MessageDetailScreen
-import com.guru.composecookbook.theme.graySurface
-import com.guru.composecookbook.theme.green500
+import com.codevex.compose.demos.gmail.R
+import com.codevex.compose.demos.gmail.data.DemoDataProvider
+import com.codevex.compose.demos.gmail.ui.AnimatingFabContent
+import com.codevex.compose.demos.gmail.ui.create.CreateMessageScreen
+import com.codevex.compose.demos.gmail.ui.details.MessageDetailScreen
+import com.codevex.compose.demos.gmail.ui.theme.graySurface
+import com.codevex.compose.demos.gmail.ui.theme.green500
 import kotlin.math.absoluteValue
-
 
 @Composable
 fun GmailScreen() {
@@ -140,7 +140,6 @@ fun GmailHome(navController: NavHostController) {
                     label = { Text("Meet") },
                 )
 
-
             }
         },
     )
@@ -178,7 +177,6 @@ fun IconWithBadge(badge: Int, icon: ImageVector, modifier: Modifier = Modifier) 
 
 }
 
-
 @Composable
 fun GmailFloatingActionButton(navController: NavHostController, expandState: Boolean) {
 
@@ -211,7 +209,6 @@ fun GmailFloatingActionButton(navController: NavHostController, expandState: Boo
         )
     }
 
-
 }
 
 @Composable
@@ -227,9 +224,9 @@ fun GmailContent(
 
     val lazyListState = rememberLazyListState()
 
-    val offsetY = remember { mutableStateOf(0) }
-    val oldIndex = remember { mutableStateOf(0) }
-    val searchOffsetY = remember { mutableStateOf(0) }
+    val offsetY = remember { mutableIntStateOf(0) }
+    val oldIndex = remember { mutableIntStateOf(0) }
+    val searchOffsetY = remember { mutableIntStateOf(0) }
 
     val searchLayoutHeightPx = with(LocalDensity.current) { 70.dp.toPx() }
 
@@ -245,9 +242,11 @@ fun GmailContent(
             oldIndex.value > lazyListState.firstVisibleItemIndex -> {   // down
                 fabExpandState.value = true
             }
+
             oldIndex.value < lazyListState.firstVisibleItemIndex -> {  // up
                 fabExpandState.value = false
             }
+
             oldIndex.value == lazyListState.firstVisibleItemIndex -> {
                 fabExpandState.value = offsetY.value > lazyListState.firstVisibleItemScrollOffset
             }
@@ -493,7 +492,6 @@ fun GmailUserEmail(imageId: Int, name: String, email: String, badgeCount: Int) {
                 )
             }
         }
-
 
     }
 }

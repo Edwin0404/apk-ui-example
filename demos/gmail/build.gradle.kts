@@ -49,6 +49,10 @@ dependencies {
     /* --- */
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.material)
+    implementation(libs.androidx.material.icons.extended.android)
+    implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.constraintlayout.compose.android)
     /* --- */
 
     testImplementation(libs.junit)

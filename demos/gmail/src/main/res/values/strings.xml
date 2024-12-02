@@ -1,3 +1,7 @@
 <resources>
     <string name="title_activity_main">MainActivity</string>
+    <string name="cd_back">Back</string>
+    <string name="cd_gmail_menu">Menu</string>
+    <string name="cd_gmail_profile">My profile</string>
+    <string name="cd_create_new_email">Create new email</string>
 </resources>

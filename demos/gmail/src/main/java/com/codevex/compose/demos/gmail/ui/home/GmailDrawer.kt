@@ -1,4 +1,4 @@
-package com.guru.composecookbook.gmail.ui.home
+package com.codevex.compose.demos.gmail.ui.home
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,8 +9,17 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Label
+import androidx.compose.material.icons.automirrored.outlined.LabelImportant
+import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.filled.AllInbox
-import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.outlined.AccessTime
+import androidx.compose.material.icons.outlined.Groups
+import androidx.compose.material.icons.outlined.Inbox
+import androidx.compose.material.icons.outlined.LocalOffer
+import androidx.compose.material.icons.outlined.MarkunreadMailbox
+import androidx.compose.material.icons.outlined.MoreTime
+import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,19 +61,24 @@ fun GmailDrawer(modifier: Modifier = Modifier) {
         item { DrawerItem(icon = Icons.Outlined.LocalOffer, title = "Promotion") }
 
         item { DrawerCategory(title = "RECENT LABELS") }
-        item { DrawerItem(icon = Icons.Outlined.Label, title = "[Imap]/Trash") }
-        item { DrawerItem(icon = Icons.Outlined.Label, title = "facebook") }
+        item { DrawerItem(icon = Icons.AutoMirrored.Outlined.Label, title = "[Imap]/Trash") }
+        item { DrawerItem(icon = Icons.AutoMirrored.Outlined.Label, title = "facebook") }
 
         item { DrawerCategory(title = "ALL LABELS") }
         item { DrawerItem(icon = Icons.Outlined.StarBorder, title = "Starred") }
         item { DrawerItem(icon = Icons.Outlined.AccessTime, title = "Snoozed") }
-        item { DrawerItem(icon = Icons.Outlined.LabelImportant, title = "Important", "99+") }
-        item { DrawerItem(icon = Icons.Outlined.Send, title = "Sent", "99+") }
+        item {
+            DrawerItem(
+                icon = Icons.AutoMirrored.Outlined.LabelImportant,
+                title = "Important",
+                "99+"
+            )
+        }
+        item { DrawerItem(icon = Icons.AutoMirrored.Outlined.Send, title = "Sent", "99+") }
         item { DrawerItem(icon = Icons.Outlined.MoreTime, title = "Scheduled", "99+") }
         item { DrawerItem(icon = Icons.Outlined.MarkunreadMailbox, title = "Outbox", "10") }
 
     }
-
 }
 
 @Composable
@@ -96,7 +110,6 @@ fun DrawerItem(icon: ImageVector, title: String, msgCount: String = "") {
         }
 
     }
-
 }
 
 @Composable
@@ -109,5 +122,4 @@ fun DrawerCategory(title: String) {
         fontSize = 12.sp,
         modifier = Modifier.padding(16.dp)
     )
-
 }

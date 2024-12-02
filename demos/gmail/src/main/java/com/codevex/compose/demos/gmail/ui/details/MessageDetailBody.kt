@@ -1,10 +1,15 @@
-package com.guru.composecookbook.gmail.ui.details
+package com.codevex.compose.demos.gmail.ui.details
 
 import android.webkit.WebView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,7 +17,13 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.automirrored.outlined.Redo
+import androidx.compose.material.icons.automirrored.outlined.Reply
+import androidx.compose.material.icons.automirrored.outlined.Undo
+import androidx.compose.material.icons.outlined.ExpandMore
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.outlined.StarBorder
+import androidx.compose.material.icons.outlined.SubdirectoryArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,9 +38,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.guru.composecookbook.gmail.R
-import com.guru.composecookbook.gmail.data.sampleMessage
-
+import com.codevex.compose.demos.gmail.R
+import com.codevex.compose.demos.gmail.data.sampleMessage
 
 @Preview
 @Composable
@@ -59,7 +69,6 @@ fun MessageDetailBody(modifier: Modifier = Modifier) {
 
         item {
             Row {
-
 
                 Image(
                     painter = painterResource(id = R.drawable.p3),
@@ -155,17 +164,17 @@ fun MessageDetailBody(modifier: Modifier = Modifier) {
         item {
             Row {
                 ReplyTypeAction(
-                    asset = Icons.Outlined.Undo,
+                    asset = Icons.AutoMirrored.Outlined.Undo,
                     text = "Reply",
                     modifier = Modifier.weight(1f)
                 )
                 ReplyTypeAction(
-                    asset = Icons.Outlined.Reply,
+                    asset = Icons.AutoMirrored.Outlined.Reply,
                     text = "Reply All",
                     modifier = Modifier.weight(1f)
                 )
                 ReplyTypeAction(
-                    asset = Icons.Outlined.Redo,
+                    asset = Icons.AutoMirrored.Outlined.Redo,
                     text = "Forward",
                     modifier = Modifier.weight(1f)
                 )
@@ -175,7 +184,6 @@ fun MessageDetailBody(modifier: Modifier = Modifier) {
     }
 
 }
-
 
 @Composable
 fun ReplyTypeAction(asset: ImageVector, text: String, modifier: Modifier) {

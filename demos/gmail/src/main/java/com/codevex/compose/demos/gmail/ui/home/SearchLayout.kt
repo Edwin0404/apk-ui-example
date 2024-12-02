@@ -1,4 +1,4 @@
-package com.guru.composecookbook.gmail.ui.home
+package com.codevex.compose.demos.gmail.ui.home
 
 import android.content.Context
 import androidx.compose.foundation.Image
@@ -11,10 +11,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.MaterialTheme.typography
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -29,14 +36,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.guru.composecookbook.gmail.R
-import com.guru.composecookbook.theme.graySurface
-import com.guru.composecookbook.theme.typography
+import com.codevex.compose.demos.gmail.R
+import com.codevex.compose.demos.gmail.ui.theme.graySurface
 import kotlinx.coroutines.launch
 
 @Composable
-fun SearchLayout(offset: Int, drawerState: DrawerState, showUserDialog: MutableState<Boolean>,
-        onCreateNewEmailClickListener : () -> Unit) {
+fun SearchLayout(
+    offset: Int, drawerState: DrawerState, showUserDialog: MutableState<Boolean>,
+    onCreateNewEmailClickListener: () -> Unit,
+) {
 
     val searchLayoutHeightDp = 70.dp
     val background = if (isSystemInDarkTheme()) graySurface else Color.White.copy(alpha = 0.8f)

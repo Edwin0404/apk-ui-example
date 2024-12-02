@@ -1,4 +1,4 @@
-package com.guru.composecookbook.gmail.ui.create
+package com.codevex.compose.demos.gmail.ui.create
 
 import androidx.compose.foundation.background
 import androidx.compose.material.DropdownMenu
