@@ -25,13 +25,9 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Divider
 import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.PersonAdd
@@ -40,11 +36,17 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Mail
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,39 +61,44 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.codevex.compose.demos.gmail.R
 import com.codevex.compose.demos.gmail.data.DemoDataProvider
 import com.codevex.compose.demos.gmail.ui.AnimatingFabContent
+import com.codevex.compose.demos.gmail.ui.Route
 import com.codevex.compose.demos.gmail.ui.create.CreateMessageScreen
 import com.codevex.compose.demos.gmail.ui.details.MessageDetailScreen
 import com.codevex.compose.demos.gmail.ui.theme.graySurface
 import com.codevex.compose.demos.gmail.ui.theme.green500
-
+import com.kiwi.navigationcompose.typed.composable
+import com.kiwi.navigationcompose.typed.createRoutePattern
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlin.math.absoluteValue
+import com.kiwi.navigationcompose.typed.navigate as kiwiNavigate
 
+@ExperimentalSerializationApi
 @Composable
 fun GmailScreen() {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = "home"
+        startDestination = createRoutePattern<Route.Home>()
     ) {
-        composable("home") {
+        composable<Route.Home> {
             GmailHome(navController = navController)
         }
 
-        composable("detail") {
+        composable<Route.Detail> {
             MessageDetailScreen(navController = navController)
         }
 
-        composable("create") {
+        composable<Route.Create> {
             CreateMessageScreen(navController = navController)
         }
     }
 }
 
+@ExperimentalSerializationApi
 @Composable
 fun GmailHome(navController: NavHostController) {
 
@@ -104,8 +111,8 @@ fun GmailHome(navController: NavHostController) {
             GmailFloatingActionButton(navController, fabExpandState.value)
         },
         drawerContent = { GmailDrawer() },
-        drawerBackgroundColor = MaterialTheme.colors.background,
-        drawerContentColor = MaterialTheme.colors.onBackground,
+        drawerBackgroundColor = MaterialTheme.colorScheme.background,
+        drawerContentColor = MaterialTheme.colorScheme.onBackground,
         scaffoldState = scaffoldState,
         content = { paddingValues ->
             GmailContent(
@@ -165,7 +172,7 @@ fun IconWithBadge(badge: Int, icon: ImageVector, modifier: Modifier = Modifier) 
                 text = "$badge",
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp,
-                color = MaterialTheme.colors.surface,
+                color = MaterialTheme.colorScheme.surface,
                 modifier = Modifier
                     .padding(top = 4.dp)
                     .clip(CircleShape)
@@ -178,19 +185,20 @@ fun IconWithBadge(badge: Int, icon: ImageVector, modifier: Modifier = Modifier) 
 
 }
 
+@ExperimentalSerializationApi
 @Composable
 fun GmailFloatingActionButton(navController: NavHostController, expandState: Boolean) {
 
     FloatingActionButton(
         onClick = {
-            navController.navigate("create")
+            navController.kiwiNavigate(Route.Create)
         },
         modifier = Modifier
             .padding(16.dp)
             .height(48.dp)
             .widthIn(min = 48.dp),
-        backgroundColor = MaterialTheme.colors.surface,
-        contentColor = MaterialTheme.colors.primary
+        backgroundColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.primary
     ) {
         AnimatingFabContent(
             icon = {
@@ -206,12 +214,12 @@ fun GmailFloatingActionButton(navController: NavHostController, expandState: Boo
                 )
             },
             extended = expandState
-
         )
     }
 
 }
 
+@ExperimentalSerializationApi
 @Composable
 fun GmailContent(
     fabExpandState: MutableState<Boolean>,
@@ -225,31 +233,31 @@ fun GmailContent(
 
     val lazyListState = rememberLazyListState()
 
-    val offsetY = remember { mutableIntStateOf(0) }
-    val oldIndex = remember { mutableIntStateOf(0) }
-    val searchOffsetY = remember { mutableIntStateOf(0) }
+    var offsetY by remember { mutableIntStateOf(0) }
+    var oldIndex by remember { mutableIntStateOf(0) }
+    var searchOffsetY by remember { mutableIntStateOf(0) }
 
     val searchLayoutHeightPx = with(LocalDensity.current) { 70.dp.toPx() }
 
     // ensures that the user intents to have scroll gesture..
     val isVisibleScrolled =
-        oldIndex.value != lazyListState.firstVisibleItemIndex ||
-                (offsetY.value - lazyListState.firstVisibleItemScrollOffset).absoluteValue > 15
+        oldIndex != lazyListState.firstVisibleItemIndex ||
+                (offsetY - lazyListState.firstVisibleItemScrollOffset).absoluteValue > 15
 
     println("${lazyListState.firstVisibleItemIndex}  ${lazyListState.firstVisibleItemScrollOffset}")
 
     if (isVisibleScrolled) {
         when {
-            oldIndex.value > lazyListState.firstVisibleItemIndex -> {   // down
+            oldIndex > lazyListState.firstVisibleItemIndex -> {   // down
                 fabExpandState.value = true
             }
 
-            oldIndex.value < lazyListState.firstVisibleItemIndex -> {  // up
+            oldIndex < lazyListState.firstVisibleItemIndex -> {  // up
                 fabExpandState.value = false
             }
 
-            oldIndex.value == lazyListState.firstVisibleItemIndex -> {
-                fabExpandState.value = offsetY.value > lazyListState.firstVisibleItemScrollOffset
+            oldIndex == lazyListState.firstVisibleItemIndex -> {
+                fabExpandState.value = offsetY > lazyListState.firstVisibleItemScrollOffset
             }
         }
 
@@ -258,19 +266,16 @@ fun GmailContent(
             && lazyListState.firstVisibleItemScrollOffset < searchLayoutHeightPx
             && !fabExpandState.value
         ) {
-            searchOffsetY.value = -lazyListState.firstVisibleItemScrollOffset
+            searchOffsetY = -lazyListState.firstVisibleItemScrollOffset
         } else if (fabExpandState.value) {
-            searchOffsetY.value = 0
+            searchOffsetY = 0
         } else if (!fabExpandState.value) {
-            searchOffsetY.value = (-searchLayoutHeightPx).toInt()
+            searchOffsetY = (-searchLayoutHeightPx).toInt()
         }
-
     }
 
-    offsetY.value = lazyListState.firstVisibleItemScrollOffset
-    oldIndex.value = lazyListState.firstVisibleItemIndex
-
-
+    offsetY = lazyListState.firstVisibleItemScrollOffset
+    oldIndex = lazyListState.firstVisibleItemIndex
 
     Box(modifier = modifier) {
 
@@ -287,19 +292,16 @@ fun GmailContent(
                     Box(modifier = Modifier.background(green500)) {
                         GmailListActionItems(modifier = Modifier.align(Alignment.CenterEnd))
                         GmailListItem(it) {
-                            navController.navigate("detail")
+                            navController.kiwiNavigate(Route.Detail)
                         }
                     }
                 }
             }
-
         }
 
-
-        SearchLayout(searchOffsetY.value, scaffoldState.drawerState, showUserDialog) {
-            navController.navigate("create")
+        SearchLayout(searchOffsetY, scaffoldState.drawerState, showUserDialog) {
+            navController.kiwiNavigate(Route.Create)
         }
-
     }
 }
 
@@ -319,7 +321,7 @@ fun UserEmailDialog(showUserDialog: MutableState<Boolean>) {
                 modifier = Modifier,
                 shape = MaterialTheme.shapes.medium,
                 color = background,
-                contentColor = MaterialTheme.colors.onSurface
+                contentColor = MaterialTheme.colorScheme.onSurface
             ) {
 
                 Column {
@@ -349,7 +351,7 @@ fun UserEmailDialog(showUserDialog: MutableState<Boolean>) {
                             .padding(8.dp)
                             .border(1.dp, Color.Gray.copy(alpha = 0.6f), RoundedCornerShape(16.dp))
                             .clip(RoundedCornerShape(16.dp))
-                            .clickable(onClick = {})
+                            .clickable {}
                             .padding(horizontal = 12.dp, vertical = 8.dp)
                             .align(Alignment.CenterHorizontally)
                     )
@@ -380,7 +382,7 @@ fun UserEmailDialog(showUserDialog: MutableState<Boolean>) {
                     ) {
                         Icon(
                             imageVector = Icons.Default.PersonAdd,
-                            tint = MaterialTheme.colors.onSurface,
+                            tint = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(8.dp),
                             contentDescription = null
                         )
@@ -388,7 +390,7 @@ fun UserEmailDialog(showUserDialog: MutableState<Boolean>) {
                         Text(
                             text = "Add another account",
                             fontSize = 14.sp,
-                            color = MaterialTheme.colors.onSurface,
+                            color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(start = 8.dp)
                         )
                     }
@@ -401,14 +403,14 @@ fun UserEmailDialog(showUserDialog: MutableState<Boolean>) {
                     ) {
                         Icon(
                             imageVector = Icons.Default.AccountCircle,
-                            tint = MaterialTheme.colors.onSurface,
+                            tint = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(8.dp),
                             contentDescription = null
                         )
                         Text(
                             text = "Manage accounts on this device",
                             fontSize = 14.sp,
-                            color = MaterialTheme.colors.onSurface,
+                            color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(start = 8.dp)
                         )
                     }
@@ -430,7 +432,7 @@ fun UserEmailDialog(showUserDialog: MutableState<Boolean>) {
                             fontSize = 12.sp,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
-                                .clickable(onClick = {})
+                                .clickable {}
                                 .padding(8.dp)
                         )
                         Text(
@@ -441,18 +443,15 @@ fun UserEmailDialog(showUserDialog: MutableState<Boolean>) {
                             fontSize = 12.sp,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
-                                .clickable(onClick = {})
+                                .clickable {}
                                 .padding(8.dp)
 
                         )
                     }
-
                 }
             }
         }
-
     }
-
 }
 
 @Composable
@@ -468,9 +467,7 @@ fun GmailUserEmail(imageId: Int, name: String, email: String, badgeCount: Int) {
             modifier = Modifier
                 .size(32.dp)
                 .clip(CircleShape)
-                .clickable(onClick = {
-
-                })
+                .clickable {}
         )
 
         Column(

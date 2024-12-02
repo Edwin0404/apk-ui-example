@@ -3,9 +3,8 @@
 
     <application>
         <activity
-            android:name=".MainActivity"
+            android:name=".DemoGmailActivity"
             android:exported="true"
-            android:label="@string/title_activity_main"
             android:theme="@style/Theme.ApkUISample" />
     </application>
 
