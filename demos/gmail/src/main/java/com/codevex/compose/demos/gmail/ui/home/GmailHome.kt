@@ -1,6 +1,5 @@
 package com.codevex.compose.demos.gmail.ui.home
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,18 +22,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Divider
-import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Mail
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,7 +54,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,7 +62,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.codevex.compose.demos.gmail.R
-import com.codevex.compose.demos.gmail.ui.AnimatingFabContent
 import com.codevex.compose.demos.gmail.ui.Route
 import com.codevex.compose.demos.gmail.ui.create.CreateMessageScreen
 import com.codevex.compose.demos.gmail.ui.details.Email
@@ -112,14 +110,18 @@ fun GmailHome(
     navController: NavHostController,
     emails: List<Email>,
 ) {
-
     val scaffoldState = rememberScaffoldState()
-    val fabExpandState = remember { mutableStateOf(false) }
+    val fabExpandState = remember { mutableStateOf(true) }
     val showUserDialog = remember { mutableStateOf(false) }
 
     Scaffold(
         floatingActionButton = {
-            GmailFloatingActionButton(navController, fabExpandState.value)
+            ExtendedFloatingActionButton(
+                onClick = { navController.kiwiNavigate(Route.Create) },
+                expanded = fabExpandState.value,
+                icon = { Icon(Icons.Filled.Edit, null) },
+                text = { Text("Compose") },
+            )
         },
         drawerContent = { GmailDrawer() },
         drawerBackgroundColor = MaterialTheme.colorScheme.background,
@@ -137,15 +139,18 @@ fun GmailHome(
         },
         bottomBar = {
             val background = if (isSystemInDarkTheme()) graySurface else Color.White
+
             BottomNavigation(
                 backgroundColor = background
             ) {
                 BottomNavigationItem(
                     icon = {
-                        IconWithBadge(badge = 1, icon = Icons.Outlined.Mail)
+                        IconWithBadge(
+                            badge = emails.filter { it.isFavourite }.size,
+                            icon = Icons.Outlined.Mail
+                        )
                     },
-                    onClick = {
-                    },
+                    onClick = {},
                     selected = true,
                     label = { Text("Mail") },
                 )
@@ -154,81 +159,28 @@ fun GmailHome(
                     icon = {
                         IconWithBadge(badge = 0, icon = Icons.Outlined.Call)
                     },
-                    onClick = {
-                    },
-                    selected = true,
+                    onClick = { },
+                    selected = false,
                     label = { Text("Meet") },
                 )
-
             }
-        },
+        }
     )
 
     UserEmailDialog(showUserDialog)
 }
 
 @Composable
-fun IconWithBadge(badge: Int, icon: ImageVector, modifier: Modifier = Modifier) {
-
-    Box(modifier = Modifier.size(36.dp)) {
-        Icon(
-            imageVector = icon,
-            modifier = modifier.align(
-                Alignment.BottomCenter
-            ),
-            contentDescription = null
-        )
-
-        if (badge != 0) {
-            Text(
-                text = "$badge",
-                textAlign = TextAlign.Center,
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.surface,
-                modifier = Modifier
-                    .padding(top = 4.dp)
-                    .clip(CircleShape)
-                    .background(Color.Red)
-                    .align(Alignment.TopEnd)
-                    .size(16.dp)
-            )
+fun IconWithBadge(badge: Int, icon: ImageVector) {
+    BadgedBox(
+        badge = {
+            if (badge > 0) {
+                Badge { Text("$badge") }
+            }
         }
-    }
-
-}
-
-@ExperimentalSerializationApi
-@Composable
-fun GmailFloatingActionButton(navController: NavHostController, expandState: Boolean) {
-
-    FloatingActionButton(
-        onClick = {
-            navController.kiwiNavigate(Route.Create)
-        },
-        modifier = Modifier
-            .padding(16.dp)
-            .height(48.dp)
-            .widthIn(min = 48.dp),
-        backgroundColor = MaterialTheme.colorScheme.surface,
-        contentColor = MaterialTheme.colorScheme.primary
     ) {
-        AnimatingFabContent(
-            icon = {
-                Icon(
-                    imageVector = Icons.Outlined.Edit,
-                    contentDescription = stringResource(id = R.string.cd_create_new_email)
-                )
-            },
-            text = {
-                Text(
-                    text = "Compose",
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-            },
-            extended = expandState
-        )
+        Icon(icon, null)
     }
-
 }
 
 @ExperimentalSerializationApi
@@ -296,14 +248,10 @@ fun GmailContent(
             }
 
             items(emails) {
-                val visible = remember(it.uid) { mutableStateOf(true) }
-
-                AnimatedVisibility(visible = visible.value) {
-                    Box(modifier = Modifier.background(green500)) {
-                        GmailListActionItems(modifier = Modifier.align(Alignment.CenterEnd))
-                        GmailListItem(it) {
-                            navController.kiwiNavigate(Route.Detail(it.uid))
-                        }
+                Box(modifier = Modifier.background(green500)) {
+                    GmailListActionItems(modifier = Modifier.align(Alignment.CenterEnd))
+                    GmailListItem(it) {
+                        navController.kiwiNavigate(Route.Detail(it.uid))
                     }
                 }
             }
