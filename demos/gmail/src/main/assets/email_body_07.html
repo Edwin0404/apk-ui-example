@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Carousel Catalog</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; }
+        .carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; gap: 16px; padding: 16px; }
+        .carousel-item { flex: none; scroll-snap-align: start; background-color: #e67e22; color: #fff; width: 200px; height: 200px; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 16px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .carousel-item:nth-child(2) { background-color: #3498db; }
+        .carousel-item:nth-child(3) { background-color: #2ecc71; }
+        .carousel-item:nth-child(4) { background-color: #9b59b6; }
+        .carousel-item h3 { margin: 0; font-size: 18px; }
+        .carousel-item p { margin: 8px 0 0; font-size: 14px; }
+        .carousel::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+<h1 style="text-align: center; margin: 20px;">Product Catalog</h1>
+<div class="carousel">
+    <div class="carousel-item">
+        <h3>Product 1</h3>
+        <p>Description for product 1</p>
+    </div>
+    <div class="carousel-item">
+        <h3>Product 2</h3>
+        <p>Description for product 2</p>
+    </div>
+    <div class="carousel-item">
+        <h3>Product 3</h3>
+        <p>Description for product 3</p>
+    </div>
+    <div class="carousel-item">
+        <h3>Product 4</h3>
+        <p>Description for product 4</p>
+    </div>
+</div>
+</body>
+</html>
