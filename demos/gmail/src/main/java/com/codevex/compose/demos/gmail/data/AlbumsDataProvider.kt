@@ -19,7 +19,7 @@ object AlbumsDataProvider {
         artist = "Adele",
         song = "Someone like you",
         descriptions = "Album by Adele-2016",
-        imageId = R.drawable.dataadele21
+        imageId = R.drawable.adele21
     )
 
     val albums = mutableListOf(
