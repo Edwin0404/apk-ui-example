@@ -1,52 +1,46 @@
 package com.codevex.compose.demos.gmail.ui.create
 
 import androidx.compose.foundation.background
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 
 @Composable
+@Preview
 fun CreateMessageMoreActionPopupMenu() {
-    val expanded = remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
+    val menuItems: List<String> = listOf(
+        "Schedule send",
+        "Add from Contacts",
+        "Confidential mode",
+        "Save draft",
+        "Discard",
+        "Settings",
+        "Help and feedback"
+    )
+
     DropdownMenu(
-        expanded = expanded.value,
-        onDismissRequest = { expanded.value = false },
-        // toggle = iconButton,
+        expanded = expanded,
+        onDismissRequest = { expanded = false },
         offset = DpOffset((-32).dp, (-32).dp),
-        modifier = Modifier.background(MaterialTheme.colors.surface)
+        modifier = Modifier.background(MaterialTheme.colorScheme.surface)
     ) {
-        DropdownMenuItem(onClick = { /* Handle refresh! */ }) {
-            Text("Schedule send")
-        }
-        DropdownMenuItem(onClick = { /* Handle settings! */ }) {
-            Text("Add from Contacts")
-        }
-
-        DropdownMenuItem(onClick = { /* Handle send feedback! */ }) {
-            Text("Confidential mode")
-        }
-
-        DropdownMenuItem(onClick = { /* Handle send feedback! */ }, enabled = false) {
-            Text("Save draft")
-        }
-
-        DropdownMenuItem(onClick = { /* Handle send feedback! */ }) {
-            Text("Discard")
-        }
-
-        DropdownMenuItem(onClick = { /* Handle send feedback! */ }) {
-            Text("Settings")
-        }
-
-        DropdownMenuItem(onClick = { /* Handle send feedback! */ }) {
-            Text("Help and feedback")
+        menuItems.forEachIndexed { index, item ->
+            DropdownMenuItem(
+                onClick = { },
+                enabled = index != 3,
+                text = { Text(item) }
+            )
         }
     }
 }

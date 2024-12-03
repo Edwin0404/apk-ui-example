@@ -7,23 +7,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CreateMessageBody(
-    modifier: Modifier = Modifier,
-) {
+@Preview
+fun CreateMessageBody(modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         Row {
             Text(
@@ -47,7 +47,7 @@ fun CreateMessageBody(
                     .padding(16.dp)
             )
         }
-        Divider(color = Color.LightGray, thickness = 0.5.dp)
+        HorizontalDivider(thickness = 0.5.dp, color = Color.LightGray)
         Row {
             Text(
                 text = "To",
@@ -74,7 +74,7 @@ fun CreateMessageBody(
             )
         }
 
-        Divider(color = Color.LightGray, thickness = 0.5.dp)
+        HorizontalDivider(thickness = 0.5.dp, color = Color.LightGray)
         BasicTextField(
             value = TextFieldValue("Subject"),
             onValueChange = { },
@@ -84,7 +84,7 @@ fun CreateMessageBody(
                 .fillMaxWidth()
                 .padding(vertical = 16.dp, horizontal = 16.dp)
         )
-        Divider(color = Color.LightGray, thickness = 0.5.dp)
+        HorizontalDivider(thickness = 0.5.dp, color = Color.LightGray)
         BasicTextField(
             value = TextFieldValue("Compose email"),
             onValueChange = { },

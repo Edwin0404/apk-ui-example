@@ -20,6 +20,7 @@ import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,24 +37,50 @@ import androidx.compose.ui.unit.sp
 @Preview
 @Composable
 fun GmailDrawer(modifier: Modifier = Modifier) {
-    LazyColumn(modifier = modifier) {
-        item { DrawerHeader() }
-        item { DividerWithPadding() }
-        item { DrawerItem(icon = Icons.Filled.AllInbox, title = "All Inbox") }
-        item { DividerWithPadding() }
-        item { DrawerItem(icon = Icons.Outlined.Inbox, title = "Primary") }
-        item { DrawerItem(icon = Icons.Outlined.Groups, title = "Social") }
-        item { DrawerItem(icon = Icons.Outlined.LocalOffer, title = "Promotion") }
-        item { DrawerCategory(title = "RECENT LABELS") }
-        item { DrawerItem(icon = Icons.AutoMirrored.Outlined.Label, title = "[Imap]/Trash") }
-        item { DrawerItem(icon = Icons.AutoMirrored.Outlined.Label, title = "facebook") }
-        item { DrawerCategory(title = "ALL LABELS") }
-        item { DrawerItem(icon = Icons.Outlined.StarBorder, title = "Starred") }
-        item { DrawerItem(icon = Icons.Outlined.AccessTime, title = "Snoozed") }
-        item { DrawerItem(icon = Icons.AutoMirrored.Outlined.LabelImportant, title = "Important", msgCount = "99+") }
-        item { DrawerItem(icon = Icons.AutoMirrored.Outlined.Send, title = "Sent", msgCount = "99+") }
-        item { DrawerItem(icon = Icons.Outlined.MoreTime, title = "Scheduled", msgCount = "99+") }
-        item { DrawerItem(icon = Icons.Outlined.MarkunreadMailbox, title = "Outbox", msgCount = "10") }
+    ModalDrawerSheet {
+        LazyColumn(modifier = modifier) {
+            item { DrawerHeader() }
+            item { DividerWithPadding() }
+            item { DrawerItem(icon = Icons.Filled.AllInbox, title = "All Inbox") }
+            item { DividerWithPadding() }
+            item { DrawerItem(icon = Icons.Outlined.Inbox, title = "Primary") }
+            item { DrawerItem(icon = Icons.Outlined.Groups, title = "Social") }
+            item { DrawerItem(icon = Icons.Outlined.LocalOffer, title = "Promotion") }
+            item { DrawerCategory(title = "RECENT LABELS") }
+            item { DrawerItem(icon = Icons.AutoMirrored.Outlined.Label, title = "[Imap]/Trash") }
+            item { DrawerItem(icon = Icons.AutoMirrored.Outlined.Label, title = "facebook") }
+            item { DrawerCategory(title = "ALL LABELS") }
+            item { DrawerItem(icon = Icons.Outlined.StarBorder, title = "Starred") }
+            item { DrawerItem(icon = Icons.Outlined.AccessTime, title = "Snoozed") }
+            item {
+                DrawerItem(
+                    icon = Icons.AutoMirrored.Outlined.LabelImportant,
+                    title = "Important",
+                    msgCount = "99+"
+                )
+            }
+            item {
+                DrawerItem(
+                    icon = Icons.AutoMirrored.Outlined.Send,
+                    title = "Sent",
+                    msgCount = "99+"
+                )
+            }
+            item {
+                DrawerItem(
+                    icon = Icons.Outlined.MoreTime,
+                    title = "Scheduled",
+                    msgCount = "99+"
+                )
+            }
+            item {
+                DrawerItem(
+                    icon = Icons.Outlined.MarkunreadMailbox,
+                    title = "Outbox",
+                    msgCount = "10"
+                )
+            }
+        }
     }
 }
 

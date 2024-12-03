@@ -14,8 +14,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Edit
@@ -23,19 +21,23 @@ import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Mail
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -109,61 +111,64 @@ fun GmailHome(
     navController: NavHostController,
     emails: List<Email>,
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val fabExpandState = remember { mutableStateOf(true) }
     var showUserDialog by remember { mutableStateOf(false) }
 
-    Scaffold(
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = { navController.kiwiNavigate(Route.Create) },
-                expanded = fabExpandState.value,
-                icon = { Icon(Icons.Filled.Edit, null) },
-                text = { Text("Compose") },
-            )
-        },
+    ModalNavigationDrawer(
         drawerContent = { GmailDrawer() },
-        drawerBackgroundColor = MaterialTheme.colorScheme.background,
-        drawerContentColor = MaterialTheme.colorScheme.onBackground,
-        scaffoldState = scaffoldState,
-        bottomBar = {
-            NavigationBar(modifier = Modifier.height(60.dp)) {
-                BottomNavigationItem(
-                    icon = {
-                        IconWithBadge(
-                            badge = emails.filter { it.isFavourite }.size,
-                            icon = Icons.Outlined.Mail
-                        )
-                    },
-                    onClick = {},
-                    selected = true,
-                    label = { Text("Mail") },
+        drawerState = drawerState
+    ) {
+        Scaffold(
+            floatingActionButton = {
+                ExtendedFloatingActionButton(
+                    onClick = { navController.kiwiNavigate(Route.Create) },
+                    expanded = fabExpandState.value,
+                    icon = { Icon(Icons.Filled.Edit, null) },
+                    text = { Text("Compose") },
                 )
-
-                BottomNavigationItem(
-                    icon = {
-                        IconWithBadge(badge = 0, icon = Icons.Outlined.Call)
-                    },
-                    onClick = { },
-                    selected = false,
-                    label = { Text("Meet") },
-                )
-            }
-        }
-    ) { paddingValues ->
-        GmailContent(
-            emails = emails,
-            fabExpandState = fabExpandState,
-            navController = navController,
-            modifier = Modifier.padding(paddingValues),
-            onMenuClicked = {
-                coroutineScope.launch {
-                    scaffoldState.drawerState.open()
-                }
             },
-            onAvatarClicked = { showUserDialog = true },
-        )
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.onBackground,
+            bottomBar = {
+                NavigationBar(modifier = Modifier.height(60.dp)) {
+                    NavigationBarItem(
+                        icon = {
+                            IconWithBadge(
+                                badge = emails.filter { it.isFavourite }.size,
+                                icon = Icons.Outlined.Mail
+                            )
+                        },
+                        onClick = {},
+                        selected = true,
+                        label = { Text("Mail") },
+                    )
+
+                    NavigationBarItem(
+                        icon = {
+                            IconWithBadge(badge = 0, icon = Icons.Outlined.Call)
+                        },
+                        onClick = { },
+                        selected = false,
+                        label = { Text("Meet") },
+                    )
+                }
+            }
+        ) { paddingValues ->
+            GmailContent(
+                emails = emails,
+                fabExpandState = fabExpandState,
+                navController = navController,
+                modifier = Modifier.padding(paddingValues),
+                onMenuClicked = {
+                    coroutineScope.launch {
+                        drawerState.open()
+                    }
+                },
+                onAvatarClicked = { showUserDialog = true },
+            )
+        }
     }
 
     if (showUserDialog)
@@ -290,9 +295,7 @@ fun UserEmailDialog(user: Person = Person(), onDismissRequest: () -> Unit = {}) 
                     colors = ButtonDefaults.outlinedButtonColors().copy(
                         contentColor = MaterialTheme.colorScheme.onSurface
                     )
-                ) {
-                    Text("Manage your Google Account")
-                }
+                ) { Text("Manage your Google Account") }
 
                 HorizontalDivider()
 
