@@ -1,4 +1,4 @@
-package com.codevex.compose.ui.ui.theme
+package com.codevex.compose.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
