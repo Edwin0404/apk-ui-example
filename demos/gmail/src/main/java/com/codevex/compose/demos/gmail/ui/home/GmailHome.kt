@@ -257,9 +257,7 @@ fun GmailContent(
             }
         }
 
-        SearchLayout(searchOffsetY, scaffoldState.drawerState, showUserDialog) {
-            navController.kiwiNavigate(Route.Create)
-        }
+        SearchLayout(offset = searchOffsetY)
     }
 }
 
