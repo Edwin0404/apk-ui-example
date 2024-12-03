@@ -1,7 +1,6 @@
 package com.codevex.compose.demos.gmail.ui.home
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -57,7 +57,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.codevex.compose.demos.gmail.ui.Route
@@ -65,7 +64,6 @@ import com.codevex.compose.demos.gmail.ui.create.CreateMessageScreen
 import com.codevex.compose.demos.gmail.ui.details.Email
 import com.codevex.compose.demos.gmail.ui.details.MessageDetailScreen
 import com.codevex.compose.demos.gmail.ui.details.Person
-import com.codevex.compose.demos.gmail.ui.theme.green500
 import com.github.javafaker.Faker
 import com.kiwi.navigationcompose.typed.composable
 import com.kiwi.navigationcompose.typed.createRoutePattern
@@ -198,71 +196,61 @@ private fun GmailContent(
     onDetailClicked: (String) -> Unit = {},
 ) {
     val lazyListState = rememberLazyListState()
+    val offset = rememberOffsetY(fabExpandState, lazyListState)
 
-    var offsetY by remember { mutableIntStateOf(0) }
-    var oldIndex by remember { mutableIntStateOf(0) }
-    var searchOffsetY by remember { mutableIntStateOf(0) }
-
-    val searchLayoutHeightPx = with(LocalDensity.current) { 70.dp.toPx() }
-
-    // ensures that the user intents to have scroll gesture..
-    val isVisibleScrolled =
-        oldIndex != lazyListState.firstVisibleItemIndex ||
-                (offsetY - lazyListState.firstVisibleItemScrollOffset).absoluteValue > 15
-
-    println("${lazyListState.firstVisibleItemIndex}  ${lazyListState.firstVisibleItemScrollOffset}")
-
-    if (isVisibleScrolled) {
-        when {
-            oldIndex > lazyListState.firstVisibleItemIndex -> {   // down
-                fabExpandState.value = true
-            }
-
-            oldIndex < lazyListState.firstVisibleItemIndex -> {  // up
-                fabExpandState.value = false
-            }
-
-            oldIndex == lazyListState.firstVisibleItemIndex -> {
-                fabExpandState.value = offsetY > lazyListState.firstVisibleItemScrollOffset
+    Box(modifier = modifier) {
+        LazyColumn(state = lazyListState) {
+            item { Spacer(modifier = Modifier.height(72.dp)) }
+            items(emails) {
+                GmailListItem(it) { onDetailClicked(it.uid) }
             }
         }
 
-        // for the initial search offset
-        if (lazyListState.firstVisibleItemIndex == 0
-            && lazyListState.firstVisibleItemScrollOffset < searchLayoutHeightPx
-            && !fabExpandState.value
+        SearchLayout(
+            offset = offset,
+            onAvatarClicked = onAvatarClicked,
+            avatarRes = emails.first().to.avatar,
+            onMenuClicked = onMenuClicked
+        )
+    }
+}
+
+@Composable
+private fun rememberOffsetY(
+    fabExpandState: MutableState<Boolean>,
+    lazyListState: LazyListState,
+): Int {
+    var offsetY by remember { mutableIntStateOf(0) }
+    var oldIndex by remember { mutableIntStateOf(0) }
+    var searchOffsetY by remember { mutableIntStateOf(0) }
+    val searchLayoutHeightPx = with(LocalDensity.current) { 70.dp.toPx() }
+
+    val isVisibleScrolled = oldIndex != lazyListState.firstVisibleItemIndex ||
+            (offsetY - lazyListState.firstVisibleItemScrollOffset).absoluteValue > 15
+
+    if (isVisibleScrolled) {
+        when {
+            oldIndex > lazyListState.firstVisibleItemIndex -> fabExpandState.value = true
+            oldIndex < lazyListState.firstVisibleItemIndex -> fabExpandState.value = false
+            else -> fabExpandState.value = offsetY > lazyListState.firstVisibleItemScrollOffset
+        }
+
+        searchOffsetY = if (lazyListState.firstVisibleItemIndex == 0 &&
+            lazyListState.firstVisibleItemScrollOffset < searchLayoutHeightPx &&
+            !fabExpandState.value
         ) {
-            searchOffsetY = -lazyListState.firstVisibleItemScrollOffset
+            -lazyListState.firstVisibleItemScrollOffset
         } else if (fabExpandState.value) {
-            searchOffsetY = 0
-        } else if (!fabExpandState.value) {
-            searchOffsetY = (-searchLayoutHeightPx).toInt()
+            0
+        } else {
+            (-searchLayoutHeightPx).toInt()
         }
     }
 
     offsetY = lazyListState.firstVisibleItemScrollOffset
     oldIndex = lazyListState.firstVisibleItemIndex
 
-    Box(modifier = modifier) {
-        LazyColumn(state = lazyListState) {
-            item {
-                Spacer(modifier = Modifier.height(72.dp))
-            }
-
-            items(emails) {
-                GmailListItem(it) {
-                    onDetailClicked(it.uid)
-                }
-            }
-        }
-
-        SearchLayout(
-            offset = searchOffsetY,
-            onAvatarClicked = onAvatarClicked,
-            avatarRes = emails.first().to.avatar,
-            onMenuClicked = onMenuClicked
-        )
-    }
+    return searchOffsetY
 }
 
 @Composable
