@@ -88,8 +88,9 @@ fun GmailScreen() {
     ) {
         composable<Route.Home> {
             GmailHome(
-                navController = navController,
-                emails = emails
+                emails = emails,
+                onCreateClicked = { navController.kiwiNavigate(Route.Create) },
+                onDetailClicked = { navController.kiwiNavigate(Route.Detail(it)) }
             )
         }
 
@@ -106,10 +107,10 @@ fun GmailScreen() {
     }
 }
 
-@OptIn(ExperimentalSerializationApi::class)
 @Composable
 fun GmailHome(
-    navController: NavHostController,
+    onCreateClicked: () -> Unit = {},
+    onDetailClicked: (String) -> Unit = {},
     emails: List<Email>,
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -124,7 +125,7 @@ fun GmailHome(
         Scaffold(
             floatingActionButton = {
                 ExtendedFloatingActionButton(
-                    onClick = { navController.kiwiNavigate(Route.Create) },
+                    onClick = onCreateClicked,
                     expanded = fabExpandState.value,
                     icon = { Icon(Icons.Filled.Edit, null) },
                     text = { Text("Compose") },
@@ -158,14 +159,14 @@ fun GmailHome(
             GmailContent(
                 emails = emails,
                 fabExpandState = fabExpandState,
-                navController = navController,
                 modifier = Modifier.padding(paddingValues),
+                onAvatarClicked = { showUserDialog = true },
+                onDetailClicked = onDetailClicked,
                 onMenuClicked = {
                     coroutineScope.launch {
                         drawerState.open()
                     }
-                },
-                onAvatarClicked = { showUserDialog = true },
+                }
             )
         }
     }
@@ -175,7 +176,7 @@ fun GmailHome(
 }
 
 @Composable
-fun IconWithBadge(badge: Int, icon: ImageVector) {
+private fun IconWithBadge(badge: Int, icon: ImageVector) {
     BadgedBox(
         badge = {
             if (badge > 0) {
@@ -187,16 +188,14 @@ fun IconWithBadge(badge: Int, icon: ImageVector) {
     }
 }
 
-@OptIn(ExperimentalSerializationApi::class)
 @Composable
-fun GmailContent(
+private fun GmailContent(
     fabExpandState: MutableState<Boolean>,
-    navController: NavHostController,
+    emails: List<Email>,
     modifier: Modifier = Modifier,
     onMenuClicked: () -> Unit = {},
     onAvatarClicked: () -> Unit = {},
-    onDetailClicked: (Email) -> Unit = {},
-    emails: List<Email>,
+    onDetailClicked: (String) -> Unit = {},
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -252,7 +251,7 @@ fun GmailContent(
 
             items(emails) {
                 GmailListItem(it) {
-                    onDetailClicked(it)
+                    onDetailClicked(it.uid)
                 }
             }
         }
@@ -268,7 +267,7 @@ fun GmailContent(
 
 @Composable
 @Preview
-fun UserEmailDialog(user: Person = Person(), onDismissRequest: () -> Unit = {}) {
+private fun UserEmailDialog(user: Person = Person(), onDismissRequest: () -> Unit = {}) {
     Dialog(onDismissRequest = onDismissRequest) {
         Surface(shape = MaterialTheme.shapes.medium) {
             Column {
@@ -345,7 +344,7 @@ fun UserEmailDialog(user: Person = Person(), onDismissRequest: () -> Unit = {}) 
 }
 
 @Composable
-fun GmailUserEmail(person: Person, badgeCount: Int) {
+private fun GmailUserEmail(person: Person, badgeCount: Int) {
     Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
         Image(
             painter = painterResource(person.avatar),
