@@ -39,6 +39,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -196,7 +197,6 @@ private fun GmailContent(
     onDetailClicked: (String) -> Unit = {},
 ) {
     val lazyListState = rememberLazyListState()
-    val offset = rememberOffsetY(fabExpandState, lazyListState)
 
     Box(modifier = modifier) {
         LazyColumn(state = lazyListState) {
@@ -207,7 +207,7 @@ private fun GmailContent(
         }
 
         SearchLayout(
-            offset = offset,
+            offset = rememberOffsetY(fabExpandState, lazyListState),
             onAvatarClicked = onAvatarClicked,
             avatarRes = emails.first().to.avatar,
             onMenuClicked = onMenuClicked
@@ -225,30 +225,34 @@ private fun rememberOffsetY(
     var searchOffsetY by remember { mutableIntStateOf(0) }
     val searchLayoutHeightPx = with(LocalDensity.current) { 70.dp.toPx() }
 
-    val isVisibleScrolled = oldIndex != lazyListState.firstVisibleItemIndex ||
-            (offsetY - lazyListState.firstVisibleItemScrollOffset).absoluteValue > 15
+    LaunchedEffect(
+        lazyListState.isScrollInProgress
+    ) {
+        val isVisibleScrolled = oldIndex != lazyListState.firstVisibleItemIndex ||
+                (offsetY - lazyListState.firstVisibleItemScrollOffset).absoluteValue > 15
 
-    if (isVisibleScrolled) {
-        when {
-            oldIndex > lazyListState.firstVisibleItemIndex -> fabExpandState.value = true
-            oldIndex < lazyListState.firstVisibleItemIndex -> fabExpandState.value = false
-            else -> fabExpandState.value = offsetY > lazyListState.firstVisibleItemScrollOffset
+        if (isVisibleScrolled) {
+            when {
+                oldIndex > lazyListState.firstVisibleItemIndex -> fabExpandState.value = true
+                oldIndex < lazyListState.firstVisibleItemIndex -> fabExpandState.value = false
+                else -> fabExpandState.value = offsetY > lazyListState.firstVisibleItemScrollOffset
+            }
+
+            searchOffsetY = if (lazyListState.firstVisibleItemIndex == 0 &&
+                lazyListState.firstVisibleItemScrollOffset < searchLayoutHeightPx &&
+                !fabExpandState.value
+            ) {
+                -lazyListState.firstVisibleItemScrollOffset
+            } else if (fabExpandState.value) {
+                0
+            } else {
+                (-searchLayoutHeightPx).toInt()
+            }
         }
 
-        searchOffsetY = if (lazyListState.firstVisibleItemIndex == 0 &&
-            lazyListState.firstVisibleItemScrollOffset < searchLayoutHeightPx &&
-            !fabExpandState.value
-        ) {
-            -lazyListState.firstVisibleItemScrollOffset
-        } else if (fabExpandState.value) {
-            0
-        } else {
-            (-searchLayoutHeightPx).toInt()
-        }
+        offsetY = lazyListState.firstVisibleItemScrollOffset
+        oldIndex = lazyListState.firstVisibleItemIndex
     }
-
-    offsetY = lazyListState.firstVisibleItemScrollOffset
-    oldIndex = lazyListState.firstVisibleItemIndex
 
     return searchOffsetY
 }

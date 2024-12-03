@@ -2,12 +2,11 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("kotlinx-serialization")
 }
 
 android {
-    namespace = "com.codevex.compose.demos.gmail"
-    compileSdk = 35
+    namespace = "com.codevex.compose.ui"
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 29
@@ -48,14 +47,6 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     /* --- */
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.material.icons.extended.android)
-    implementation(libs.androidx.navigation.runtime.ktx)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.constraintlayout.compose.android)
-    implementation(libs.kiwi.navigation.core)
-    implementation(libs.kotlinx.serialization.core)
-    implementation(libs.javafaker)
     /* --- */
 
     testImplementation(libs.junit)

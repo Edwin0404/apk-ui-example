@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "Apk UI Sample"
 include(":app")
 include(":demos:gmail")
+include(":ui")
