@@ -1,17 +1,14 @@
 package com.codevex.compose.demos.gmail.ui.home
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Icon
@@ -24,7 +21,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -32,26 +28,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ChainStyle
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.codevex.compose.demos.gmail.ui.details.Email
 import com.github.javafaker.Faker
 
 @Composable
-fun GmailListItem(item: Email, clickListener: () -> Unit) {
+@Preview
+fun GmailListItem(item: Email = Email(), clickListener: () -> Unit = {}) {
+    var stared by remember(item.uid) { mutableStateOf(item.isFavourite) }
 
-    ConstraintLayout(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
-            .fillMaxWidth()
-            .clickable { clickListener() }
-            .padding(horizontal = 12.dp, vertical = 4.dp)
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .clickable { clickListener() }
+        .padding(horizontal = 12.dp, vertical = 4.dp)
     ) {
-        var stared by remember(item.uid) { mutableStateOf(item.isFavourite) }
-        val (image, title, subtitle, source, starButton, time) = createRefs()
-        createVerticalChain(title, subtitle, source, chainStyle = ChainStyle.Packed)
-
         Image(
             painter = painterResource(item.from.avatar),
             contentScale = ContentScale.Crop,
@@ -59,92 +48,44 @@ fun GmailListItem(item: Email, clickListener: () -> Unit) {
             modifier = Modifier
                 .size(50.dp)
                 .clip(CircleShape)
-                .constrainAs(image) {
-                    linkTo(start = parent.start, end = title.start)
-                    top.linkTo(title.top)
-                }
         )
-        Text(
-            text = item.from.name,
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.constrainAs(title) {
-                start.linkTo(image.end, 16.dp)
-                width = Dimension.fillToConstraints
+
+        Column(modifier = Modifier.padding(start = 12.dp)) {
+            Row {
+                Text(
+                    text = item.from.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.weight(1f)
+                )
+
+                Text(
+                    text = item.date,
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 12.sp),
+                )
             }
-        )
-        Text(
-            text = item.date,
-            style = MaterialTheme.typography.titleLarge.copy(fontSize = 12.sp),
-            modifier = Modifier.constrainAs(time) {
-                end.linkTo(parent.end, margin = 8.dp)
-                top.linkTo(title.top)
-            }
-        )
-        Text(
-            text = item.subject,
-            style = MaterialTheme.typography.titleLarge.copy(fontSize = 14.sp),
-            modifier = Modifier.constrainAs(subtitle) {
-                start.linkTo(image.end, 16.dp)
-                width = Dimension.fillToConstraints
-            }
-        )
-        Text(
-            text = Faker().lorem().sentence(25),
-            style = MaterialTheme.typography.bodySmall,
-            maxLines = 2,
-            modifier = Modifier
-                .constrainAs(source) {
-                    linkTo(start = title.start, end = starButton.start)
-                    width = Dimension.fillToConstraints
-                }
-                .alpha(0.6f)
-        )
-        IconButton(
-            onClick = { stared = !stared },
-            modifier = Modifier
-                .constrainAs(starButton) {
-                    linkTo(
-                        top = source.top,
-                        bottom = source.bottom,
-                    )
-                    linkTo(
-                        start = source.end,
-                        end = parent.end
+
+            Text(
+                text = item.subject,
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 14.sp),
+                maxLines = 1,
+            )
+
+            Row {
+                Text(
+                    text = Faker().lorem().sentence(25),
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.weight(1f),
+                    maxLines = 1,
+                )
+
+                IconButton(onClick = { stared = !stared }) {
+                    Icon(
+                        imageVector = if (stared) Icons.Default.Star else Icons.Default.StarBorder,
+                        contentDescription = null,
+                        tint = if (stared) Color.Yellow else MaterialTheme.colorScheme.onSurface
                     )
                 }
-        ) {
-            Icon(
-                imageVector = if (stared) Icons.Default.Star else Icons.Default.StarBorder,
-                contentDescription = null,
-                tint = if (stared) Color.Yellow else MaterialTheme.colorScheme.onSurface
-            )
+            }
         }
     }
-}
-
-@Composable
-@Preview
-fun GmailListActionItems(modifier: Modifier=Modifier) {
-    Row(horizontalArrangement = Arrangement.End, modifier = modifier) {
-        IconButton(onClick = {}) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                tint = MaterialTheme.colorScheme.onPrimary,
-                contentDescription = null
-            )
-        }
-        IconButton(onClick = {}) {
-            Icon(
-                imageVector = Icons.Default.AccountBox,
-                tint = MaterialTheme.colorScheme.onPrimary,
-                contentDescription = null
-            )
-        }
-    }
-}
-
-@Composable
-@Preview
-fun PreviewGmailItem() {
-    GmailListItem(item = Email()) {}
 }

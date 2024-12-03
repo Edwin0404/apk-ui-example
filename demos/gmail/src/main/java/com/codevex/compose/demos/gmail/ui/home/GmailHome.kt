@@ -76,6 +76,7 @@ import com.kiwi.navigationcompose.typed.navigate as kiwiNavigate
 
 @OptIn(ExperimentalSerializationApi::class)
 @Composable
+@Preview
 fun GmailScreen() {
     val navController = rememberNavController()
     val user = Person()
@@ -129,8 +130,6 @@ fun GmailHome(
                     text = { Text("Compose") },
                 )
             },
-            containerColor = MaterialTheme.colorScheme.background,
-            contentColor = MaterialTheme.colorScheme.onBackground,
             bottomBar = {
                 NavigationBar(modifier = Modifier.height(60.dp)) {
                     NavigationBarItem(
@@ -196,6 +195,7 @@ fun GmailContent(
     modifier: Modifier = Modifier,
     onMenuClicked: () -> Unit = {},
     onAvatarClicked: () -> Unit = {},
+    onDetailClicked: (Email) -> Unit = {},
     emails: List<Email>,
 ) {
     val lazyListState = rememberLazyListState()
@@ -251,10 +251,8 @@ fun GmailContent(
             }
 
             items(emails) {
-                Box(modifier = Modifier.background(green500)) {
-                    GmailListItem(it) {
-                        navController.kiwiNavigate(Route.Detail(it.uid))
-                    }
+                GmailListItem(it) {
+                    onDetailClicked(it)
                 }
             }
         }
