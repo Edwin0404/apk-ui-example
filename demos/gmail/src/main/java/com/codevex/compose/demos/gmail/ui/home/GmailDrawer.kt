@@ -57,7 +57,7 @@ fun GmailDrawer() {
 }
 
 @Composable
-fun DrawerItem(icon: ImageVector, title: String, selected: Boolean = false) {
+private fun DrawerItem(icon: ImageVector, title: String, selected: Boolean = false) {
     NavigationDrawerItem(
         shape = RoundedCornerShape(0.dp),
         label = { Text(title) },
@@ -68,7 +68,7 @@ fun DrawerItem(icon: ImageVector, title: String, selected: Boolean = false) {
 }
 
 @Composable
-fun DrawerItemWithCount(icon: ImageVector, title: String, minCount: Int = 90, maxCount: Int = 150) {
+private fun DrawerItemWithCount(icon: ImageVector, title: String, minCount: Int = 90, maxCount: Int = 150) {
     val count = Faker().number().numberBetween(minCount, maxCount)
     NavigationDrawerItem(
         shape = RoundedCornerShape(0.dp),
@@ -81,7 +81,7 @@ fun DrawerItemWithCount(icon: ImageVector, title: String, minCount: Int = 90, ma
 }
 
 @Composable
-fun DrawerHeader() {
+private fun DrawerHeader() {
     Text(
         text = "Gmail",
         color = Color.Red,
@@ -91,12 +91,12 @@ fun DrawerHeader() {
 }
 
 @Composable
-fun DividerWithPadding() {
+private fun DividerWithPadding() {
     HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 }
 
 @Composable
-fun DrawerCategory(title: String) {
+private fun DrawerCategory(title: String) {
     Text(
         text = title,
         letterSpacing = 0.7.sp,
