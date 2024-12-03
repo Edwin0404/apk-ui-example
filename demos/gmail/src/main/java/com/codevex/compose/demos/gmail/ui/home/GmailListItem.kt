@@ -123,7 +123,8 @@ fun GmailListItem(item: Email, clickListener: () -> Unit) {
 }
 
 @Composable
-fun GmailListActionItems(modifier: Modifier) {
+@Preview
+fun GmailListActionItems(modifier: Modifier=Modifier) {
     Row(horizontalArrangement = Arrangement.End, modifier = modifier) {
         IconButton(onClick = {}) {
             Icon(

@@ -1,5 +1,6 @@
 package com.codevex.compose.demos.gmail.ui.home
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -38,13 +39,14 @@ import com.codevex.compose.demos.gmail.ui.theme.graySurface
 @Composable
 @Preview(showBackground = true)
 fun SearchLayoutPreview() {
-    SearchLayout(offset = 0)
+    SearchLayout(offset = 0, avatarRes = R.drawable.avatar_03)
 }
 
 @Composable
 fun SearchLayout(
     onMenuClicked: () -> Unit = {},
     onAvatarClicked: () -> Unit = {},
+    @DrawableRes avatarRes: Int,
     offset: Int,
 ) {
     val background = if (isSystemInDarkTheme()) graySurface else Color.White.copy(alpha = 0.8f)
@@ -81,7 +83,7 @@ fun SearchLayout(
 
             IconButton(onClick = onAvatarClicked) {
                 Image(
-                    painter = painterResource(id = R.drawable.avatar_03),
+                    painter = painterResource(avatarRes),
                     contentDescription = stringResource(id = R.string.cd_gmail_profile),
                     modifier = Modifier.clip(CircleShape)
                 )

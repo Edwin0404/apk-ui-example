@@ -19,11 +19,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -39,6 +37,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -46,6 +45,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,10 +66,12 @@ import com.codevex.compose.demos.gmail.ui.Route
 import com.codevex.compose.demos.gmail.ui.create.CreateMessageScreen
 import com.codevex.compose.demos.gmail.ui.details.Email
 import com.codevex.compose.demos.gmail.ui.details.MessageDetailScreen
+import com.codevex.compose.demos.gmail.ui.details.Person
 import com.codevex.compose.demos.gmail.ui.theme.graySurface
 import com.codevex.compose.demos.gmail.ui.theme.green500
 import com.kiwi.navigationcompose.typed.composable
 import com.kiwi.navigationcompose.typed.createRoutePattern
+import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlin.math.absoluteValue
 import com.kiwi.navigationcompose.typed.navigate as kiwiNavigate
@@ -78,7 +80,8 @@ import com.kiwi.navigationcompose.typed.navigate as kiwiNavigate
 @Composable
 fun GmailScreen() {
     val navController = rememberNavController()
-    val emails = (0..20).map { Email() }
+    val user = Person()
+    val emails = (0..20).map { Email().copy(to = user) }
 
     NavHost(
         navController = navController,
@@ -104,15 +107,16 @@ fun GmailScreen() {
     }
 }
 
-@ExperimentalSerializationApi
+@OptIn(ExperimentalSerializationApi::class)
 @Composable
 fun GmailHome(
     navController: NavHostController,
     emails: List<Email>,
 ) {
     val scaffoldState = rememberScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
     val fabExpandState = remember { mutableStateOf(true) }
-    val showUserDialog = remember { mutableStateOf(false) }
+    var showUserDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         floatingActionButton = {
@@ -127,22 +131,8 @@ fun GmailHome(
         drawerBackgroundColor = MaterialTheme.colorScheme.background,
         drawerContentColor = MaterialTheme.colorScheme.onBackground,
         scaffoldState = scaffoldState,
-        content = { paddingValues ->
-            GmailContent(
-                fabExpandState = fabExpandState,
-                scaffoldState = scaffoldState,
-                navController = navController,
-                showUserDialog = showUserDialog,
-                modifier = Modifier.padding(paddingValues),
-                emails = emails
-            )
-        },
         bottomBar = {
-            val background = if (isSystemInDarkTheme()) graySurface else Color.White
-
-            BottomNavigation(
-                backgroundColor = background
-            ) {
+            NavigationBar(modifier = Modifier.height(60.dp)) {
                 BottomNavigationItem(
                     icon = {
                         IconWithBadge(
@@ -165,9 +155,23 @@ fun GmailHome(
                 )
             }
         }
-    )
+    ) { paddingValues ->
+        GmailContent(
+            emails = emails,
+            fabExpandState = fabExpandState,
+            navController = navController,
+            modifier = Modifier.padding(paddingValues),
+            onMenuClicked = {
+                coroutineScope.launch {
+                    scaffoldState.drawerState.open()
+                }
+            },
+            onAvatarClicked = { showUserDialog = true },
+        )
+    }
 
-    UserEmailDialog(showUserDialog)
+    if (showUserDialog)
+        UserEmailDialog { showUserDialog = false }
 }
 
 @Composable
@@ -183,14 +187,14 @@ fun IconWithBadge(badge: Int, icon: ImageVector) {
     }
 }
 
-@ExperimentalSerializationApi
+@OptIn(ExperimentalSerializationApi::class)
 @Composable
 fun GmailContent(
     fabExpandState: MutableState<Boolean>,
-    scaffoldState: ScaffoldState,
     navController: NavHostController,
-    showUserDialog: MutableState<Boolean>,
     modifier: Modifier = Modifier,
+    onMenuClicked: () -> Unit = {},
+    onAvatarClicked: () -> Unit = {},
     emails: List<Email>,
 ) {
     val lazyListState = rememberLazyListState()
@@ -240,16 +244,13 @@ fun GmailContent(
     oldIndex = lazyListState.firstVisibleItemIndex
 
     Box(modifier = modifier) {
-
         LazyColumn(state = lazyListState) {
-
             item {
                 Spacer(modifier = Modifier.height(72.dp))
             }
 
             items(emails) {
                 Box(modifier = Modifier.background(green500)) {
-                    GmailListActionItems(modifier = Modifier.align(Alignment.CenterEnd))
                     GmailListItem(it) {
                         navController.kiwiNavigate(Route.Detail(it.uid))
                     }
@@ -257,153 +258,151 @@ fun GmailContent(
             }
         }
 
-        SearchLayout(offset = searchOffsetY)
+        SearchLayout(
+            offset = searchOffsetY,
+            onAvatarClicked = onAvatarClicked,
+            avatarRes = emails.first().to.avatar,
+            onMenuClicked = onMenuClicked
+        )
     }
 }
 
 @Composable
-fun UserEmailDialog(showUserDialog: MutableState<Boolean>) {
+fun UserEmailDialog(onDismissRequest: () -> Unit) {
 
     val background = if (isSystemInDarkTheme()) graySurface else Color.White
 
-    if (showUserDialog.value) {
-        Dialog(
-            onDismissRequest = {
-                showUserDialog.value = false
-            }
+    Dialog(
+        onDismissRequest = onDismissRequest
+    ) {
+        Surface(
+            modifier = Modifier,
+            shape = MaterialTheme.shapes.medium,
+            color = background,
+            contentColor = MaterialTheme.colorScheme.onSurface
         ) {
 
-            Surface(
-                modifier = Modifier,
-                shape = MaterialTheme.shapes.medium,
-                color = background,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            ) {
+            Column {
 
-                Column {
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(onClick = { showUserDialog.value = false }) {
-                            Icon(Icons.Outlined.Close, contentDescription = null)
-                        }
-
-                        Text(
-                            text = "Google",
-                            textAlign = TextAlign.Center,
-                            fontSize = 24.sp,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = onDismissRequest) {
+                        Icon(Icons.Outlined.Close, contentDescription = null)
                     }
-
-                    GmailUserEmail(R.drawable.avatar_01, "Subash Aryc", "subash@gmail.com", 2)
 
                     Text(
-                        text = "Manage your Google Account",
+                        text = "Google",
+                        textAlign = TextAlign.Center,
+                        fontSize = 24.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+
+                }
+
+                GmailUserEmail(R.drawable.avatar_01, "Subash Aryc", "subash@gmail.com", 2)
+
+                Text(
+                    text = "Manage your Google Account",
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(8.dp)
+                        .border(1.dp, Color.Gray.copy(alpha = 0.6f), RoundedCornerShape(16.dp))
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable {}
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+
+                Divider(
+                    thickness = 1.dp,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                GmailUserEmail(
+                    imageId = R.drawable.avatar_02,
+                    name = "Subash ",
+                    email = "aryal.subash@yahoo.com",
+                    badgeCount = 39
+                )
+                GmailUserEmail(
+                    imageId = R.drawable.avatar_02,
+                    name = "Subash Zi ",
+                    email = "subashz@gmail.com",
+                    badgeCount = 10
+                )
+
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.PersonAdd,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(8.dp),
+                        contentDescription = null
+                    )
+
+                    Text(
+                        text = "Add another account",
                         fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(8.dp),
+                        contentDescription = null
+                    )
+                    Text(
+                        text = "Manage accounts on this device",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+
+                Divider(
+                    thickness = 1.dp,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    Text(
+                        text = "Privacy Policy",
+                        fontSize = 12.sp,
                         modifier = Modifier
-                            .wrapContentWidth()
-                            .padding(8.dp)
-                            .border(1.dp, Color.Gray.copy(alpha = 0.6f), RoundedCornerShape(16.dp))
-                            .clip(RoundedCornerShape(16.dp))
+                            .clip(RoundedCornerShape(8.dp))
                             .clickable {}
-                            .padding(horizontal = 12.dp, vertical = 8.dp)
-                            .align(Alignment.CenterHorizontally)
+                            .padding(8.dp)
                     )
-
-                    Divider(
-                        thickness = 1.dp,
-                        modifier = Modifier.fillMaxWidth()
+                    Text(
+                        text = "•"
                     )
-
-                    GmailUserEmail(
-                        imageId = R.drawable.avatar_02,
-                        name = "Subash ",
-                        email = "aryal.subash@yahoo.com",
-                        badgeCount = 39
-                    )
-                    GmailUserEmail(
-                        imageId = R.drawable.avatar_02,
-                        name = "Subash Zi ",
-                        email = "subashz@gmail.com",
-                        badgeCount = 10
-                    )
-
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
+                    Text(
+                        text = "Terms of service",
+                        fontSize = 12.sp,
                         modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.PersonAdd,
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(8.dp),
-                            contentDescription = null
-                        )
-
-                        Text(
-                            text = "Add another account",
-                            fontSize = 14.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(start = 8.dp)
-                        )
-                    }
-
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 4.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AccountCircle,
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(8.dp),
-                            contentDescription = null
-                        )
-                        Text(
-                            text = "Manage accounts on this device",
-                            fontSize = 14.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(start = 8.dp)
-                        )
-                    }
-
-                    Divider(
-                        thickness = 1.dp,
-                        modifier = Modifier.fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable {}
+                            .padding(8.dp)
                     )
-
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .padding(vertical = 8.dp)
-                            .align(Alignment.CenterHorizontally)
-                    ) {
-                        Text(
-                            text = "Privacy Policy",
-                            fontSize = 12.sp,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp))
-                                .clickable {}
-                                .padding(8.dp)
-                        )
-                        Text(
-                            text = "•"
-                        )
-                        Text(
-                            text = "Terms of service",
-                            fontSize = 12.sp,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp))
-                                .clickable {}
-                                .padding(8.dp)
-
-                        )
-                    }
                 }
             }
         }
