@@ -1,10 +1,8 @@
 package com.codevex.compose.demos.gmail.ui.home
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.material.icons.automirrored.outlined.LabelImportant
@@ -21,27 +19,27 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.javafaker.Faker
 
 @Preview
 @Composable
-fun GmailDrawer(modifier: Modifier = Modifier) {
-    ModalDrawerSheet {
-        LazyColumn(modifier = modifier) {
+fun GmailDrawer() {
+    ModalDrawerSheet(
+        drawerShape = RoundedCornerShape(0.dp)
+    ) {
+        LazyColumn {
             item { DrawerHeader() }
             item { DividerWithPadding() }
-            item { DrawerItem(icon = Icons.Filled.AllInbox, title = "All Inbox") }
+            item { DrawerItem(icon = Icons.Filled.AllInbox, selected = true, title = "All Inbox") }
             item { DividerWithPadding() }
             item { DrawerItem(icon = Icons.Outlined.Inbox, title = "Primary") }
             item { DrawerItem(icon = Icons.Outlined.Groups, title = "Social") }
@@ -56,28 +54,28 @@ fun GmailDrawer(modifier: Modifier = Modifier) {
                 DrawerItem(
                     icon = Icons.AutoMirrored.Outlined.LabelImportant,
                     title = "Important",
-                    msgCount = "99+"
+                    count = Faker().number().numberBetween(90, 150)
                 )
             }
             item {
                 DrawerItem(
                     icon = Icons.AutoMirrored.Outlined.Send,
                     title = "Sent",
-                    msgCount = "99+"
+                    count = Faker().number().numberBetween(90, 150)
                 )
             }
             item {
                 DrawerItem(
                     icon = Icons.Outlined.MoreTime,
                     title = "Scheduled",
-                    msgCount = "99+"
+                    count = Faker().number().numberBetween(90, 150)
                 )
             }
             item {
                 DrawerItem(
                     icon = Icons.Outlined.MarkunreadMailbox,
                     title = "Outbox",
-                    msgCount = "10"
+                    count = Faker().number().numberBetween(10, 50)
                 )
             }
         }
@@ -96,38 +94,36 @@ fun DrawerHeader() {
 
 @Composable
 fun DividerWithPadding() {
-    Column {
-        HorizontalDivider(thickness = 0.3.dp)
-        Spacer(modifier = Modifier.padding(top = 8.dp))
-    }
+    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 }
 
 @Composable
-fun DrawerItem(icon: ImageVector, title: String, msgCount: String = "") {
-    Row {
-        Icon(imageVector = icon, modifier = Modifier.padding(16.dp), contentDescription = null)
-        Text(
-            modifier = Modifier
-                .weight(1f)
-                .align(Alignment.CenterVertically)
-                .padding(start = 8.dp),
-            text = title,
-            fontFamily = FontFamily.SansSerif,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp,
-            textAlign = TextAlign.Start
-        )
-        if (msgCount.isNotEmpty()) {
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(16.dp),
-                text = msgCount,
-                style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Start
-            )
-        }
-    }
+fun DrawerItem(
+    icon: ImageVector,
+    title: String,
+    selected: Boolean = false,
+    count: Int = 0,
+) {
+    NavigationDrawerItem(
+        shape = RoundedCornerShape(0.dp),
+        label = { Text(title) },
+        selected = selected,
+        icon = { Icon(icon, null) },
+        onClick = {},
+        badge = when (count) {
+            0 -> null
+            else -> {
+                {
+                    Text(
+                        when {
+                            count > 99 -> "99+"
+                            else -> count.toString()
+                        }
+                    )
+                }
+            }
+        },
+    )
 }
 
 @Composable
