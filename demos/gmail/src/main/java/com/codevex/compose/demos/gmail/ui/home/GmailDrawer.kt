@@ -33,53 +33,51 @@ import com.github.javafaker.Faker
 @Preview
 @Composable
 fun GmailDrawer() {
-    ModalDrawerSheet(
-        drawerShape = RoundedCornerShape(0.dp)
-    ) {
+    ModalDrawerSheet(drawerShape = RoundedCornerShape(0.dp)) {
         LazyColumn {
             item { DrawerHeader() }
             item { DividerWithPadding() }
-            item { DrawerItem(icon = Icons.Filled.AllInbox, selected = true, title = "All Inbox") }
+            item { DrawerItem(Icons.Filled.AllInbox, "All Inbox", true) }
             item { DividerWithPadding() }
-            item { DrawerItem(icon = Icons.Outlined.Inbox, title = "Primary") }
-            item { DrawerItem(icon = Icons.Outlined.Groups, title = "Social") }
-            item { DrawerItem(icon = Icons.Outlined.LocalOffer, title = "Promotion") }
-            item { DrawerCategory(title = "RECENT LABELS") }
-            item { DrawerItem(icon = Icons.AutoMirrored.Outlined.Label, title = "[Imap]/Trash") }
-            item { DrawerItem(icon = Icons.AutoMirrored.Outlined.Label, title = "facebook") }
-            item { DrawerCategory(title = "ALL LABELS") }
-            item { DrawerItem(icon = Icons.Outlined.StarBorder, title = "Starred") }
-            item { DrawerItem(icon = Icons.Outlined.AccessTime, title = "Snoozed") }
-            item {
-                DrawerItem(
-                    icon = Icons.AutoMirrored.Outlined.LabelImportant,
-                    title = "Important",
-                    count = Faker().number().numberBetween(90, 150)
-                )
-            }
-            item {
-                DrawerItem(
-                    icon = Icons.AutoMirrored.Outlined.Send,
-                    title = "Sent",
-                    count = Faker().number().numberBetween(90, 150)
-                )
-            }
-            item {
-                DrawerItem(
-                    icon = Icons.Outlined.MoreTime,
-                    title = "Scheduled",
-                    count = Faker().number().numberBetween(90, 150)
-                )
-            }
-            item {
-                DrawerItem(
-                    icon = Icons.Outlined.MarkunreadMailbox,
-                    title = "Outbox",
-                    count = Faker().number().numberBetween(10, 50)
-                )
-            }
+            item { DrawerItem(Icons.Outlined.Inbox, "Primary") }
+            item { DrawerItem(Icons.Outlined.Groups, "Social") }
+            item { DrawerItem(Icons.Outlined.LocalOffer, "Promotion") }
+            item { DrawerCategory("RECENT LABELS") }
+            item { DrawerItem(Icons.AutoMirrored.Outlined.Label, "[Imap]/Trash") }
+            item { DrawerItem(Icons.AutoMirrored.Outlined.Label, "facebook") }
+            item { DrawerCategory("ALL LABELS") }
+            item { DrawerItem(Icons.Outlined.StarBorder, "Starred") }
+            item { DrawerItem(Icons.Outlined.AccessTime, "Snoozed") }
+            item { DrawerItemWithCount(Icons.AutoMirrored.Outlined.LabelImportant, "Important") }
+            item { DrawerItemWithCount(Icons.AutoMirrored.Outlined.Send, "Sent") }
+            item { DrawerItemWithCount(Icons.Outlined.MoreTime, "Scheduled") }
+            item { DrawerItemWithCount(Icons.Outlined.MarkunreadMailbox, "Outbox", 10, 50) }
         }
     }
+}
+
+@Composable
+fun DrawerItem(icon: ImageVector, title: String, selected: Boolean = false) {
+    NavigationDrawerItem(
+        shape = RoundedCornerShape(0.dp),
+        label = { Text(title) },
+        selected = selected,
+        icon = { Icon(icon, null) },
+        onClick = {}
+    )
+}
+
+@Composable
+fun DrawerItemWithCount(icon: ImageVector, title: String, minCount: Int = 90, maxCount: Int = 150) {
+    val count = Faker().number().numberBetween(minCount, maxCount)
+    NavigationDrawerItem(
+        shape = RoundedCornerShape(0.dp),
+        label = { Text(title) },
+        icon = { Icon(icon, null) },
+        onClick = {},
+        selected = false,
+        badge = { Text(if (count > 99) "99+" else count.toString()) }
+    )
 }
 
 @Composable
@@ -95,35 +93,6 @@ fun DrawerHeader() {
 @Composable
 fun DividerWithPadding() {
     HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-}
-
-@Composable
-fun DrawerItem(
-    icon: ImageVector,
-    title: String,
-    selected: Boolean = false,
-    count: Int = 0,
-) {
-    NavigationDrawerItem(
-        shape = RoundedCornerShape(0.dp),
-        label = { Text(title) },
-        selected = selected,
-        icon = { Icon(icon, null) },
-        onClick = {},
-        badge = when (count) {
-            0 -> null
-            else -> {
-                {
-                    Text(
-                        when {
-                            count > 99 -> "99+"
-                            else -> count.toString()
-                        }
-                    )
-                }
-            }
-        },
-    )
 }
 
 @Composable
