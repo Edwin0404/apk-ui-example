@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.codevex.compose.ui"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 29
