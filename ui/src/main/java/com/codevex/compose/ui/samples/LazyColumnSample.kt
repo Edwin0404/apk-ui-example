@@ -28,12 +28,12 @@ enum class ScrollPosition { TOP, BOTTOM, MIDDLE }
 enum class ScrollDirection { UP, DOWN, IDLE }
 
 @Composable
-fun rememberScrollPosition(listState: LazyListState): State<ScrollPosition> {
+fun rememberScrollPositionState(listState: LazyListState): State<ScrollPosition> {
     return remember {
         derivedStateOf {
             when {
                 listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0 -> ScrollPosition.TOP
-                listState.canScrollForward.not() -> ScrollPosition.BOTTOM
+                !listState.canScrollForward -> ScrollPosition.BOTTOM
                 else -> ScrollPosition.MIDDLE
             }
         }
@@ -41,7 +41,7 @@ fun rememberScrollPosition(listState: LazyListState): State<ScrollPosition> {
 }
 
 @Composable
-fun rememberFirstVisibleIndex(listState: LazyListState): State<Int> {
+fun rememberFirstVisibleIndexState(listState: LazyListState): State<Int> {
     val firstVisibleIndex = remember { mutableIntStateOf(0) }
 
     LaunchedEffect(listState) {
@@ -53,7 +53,7 @@ fun rememberFirstVisibleIndex(listState: LazyListState): State<Int> {
 }
 
 @Composable
-fun rememberScrollDirection(listState: LazyListState): State<ScrollDirection> {
+fun rememberScrollDirectionState(listState: LazyListState): State<ScrollDirection> {
     val scrollDirection = remember { mutableStateOf(ScrollDirection.IDLE) }
     var previousIndex by remember { mutableIntStateOf(0) }
     var previousOffset by remember { mutableIntStateOf(0) }
@@ -77,7 +77,7 @@ fun rememberScrollDirection(listState: LazyListState): State<ScrollDirection> {
 }
 
 @Composable
-fun rememberIsAtTop(listState: LazyListState): State<Boolean> {
+fun rememberIsAtTopState(listState: LazyListState): State<Boolean> {
     val isAtTop = remember { mutableStateOf(true) }
 
     LaunchedEffect(listState) {
@@ -89,7 +89,7 @@ fun rememberIsAtTop(listState: LazyListState): State<Boolean> {
 }
 
 @Composable
-fun rememberIsAtBottom(listState: LazyListState): State<Boolean> {
+fun rememberIsAtBottomState(listState: LazyListState): State<Boolean> {
     val isAtBottom = remember { mutableStateOf(false) }
 
     LaunchedEffect(listState) {
@@ -105,9 +105,9 @@ fun rememberIsAtBottom(listState: LazyListState): State<Boolean> {
 
 @Composable
 @Preview
-private fun LazyColumnScrollPosition(modifier: Modifier = Modifier) {
+private fun PreviewScrollPosition(modifier: Modifier = Modifier) {
     val listState = rememberLazyListState()
-    val scrollPosition by rememberScrollPosition(listState)
+    val scrollPosition by rememberScrollPositionState(listState)
 
     Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
@@ -120,9 +120,9 @@ private fun LazyColumnScrollPosition(modifier: Modifier = Modifier) {
 
 @Composable
 @Preview
-private fun LazyColumnFirstIndex(modifier: Modifier = Modifier) {
+private fun PreviewFirstVisibleIndex(modifier: Modifier = Modifier) {
     val listState = rememberLazyListState()
-    val index by rememberFirstVisibleIndex(listState)
+    val index by rememberFirstVisibleIndexState(listState)
 
     Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text("First visible index: $index", Modifier.padding(16.dp))
@@ -132,13 +132,9 @@ private fun LazyColumnFirstIndex(modifier: Modifier = Modifier) {
 
 @Composable
 @Preview
-private fun LazyColumnTopButton(modifier: Modifier = Modifier) {
+private fun PreviewTopButton(modifier: Modifier = Modifier) {
     val listState = rememberLazyListState()
-    val isAtTop by remember {
-        derivedStateOf {
-            listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0
-        }
-    }
+    val isAtTop by rememberIsAtTopState(listState)
 
     Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.End) {
         if (!isAtTop) {
@@ -150,9 +146,9 @@ private fun LazyColumnTopButton(modifier: Modifier = Modifier) {
 
 @Composable
 @Preview
-private fun LazyColumnScrollDirection(modifier: Modifier = Modifier) {
+private fun PreviewScrollDirection(modifier: Modifier = Modifier) {
     val listState = rememberLazyListState()
-    val scrollDirection by rememberScrollDirection(listState)
+    val scrollDirection by rememberScrollDirectionState(listState)
 
     Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
@@ -164,16 +160,12 @@ private fun LazyColumnScrollDirection(modifier: Modifier = Modifier) {
 
 @Composable
 @Preview
-private fun LazyColumnTopBottomDetection(modifier: Modifier = Modifier) {
+private fun PreviewTopBottomDetection(modifier: Modifier = Modifier) {
     val listState = rememberLazyListState()
-    val isAtTop by rememberIsAtTop(listState)
-    val isAtBottom by rememberIsAtBottom(listState)
-    val scrollDirection by rememberScrollDirection(listState)
+    val isAtTop by rememberIsAtTopState(listState)
+    val isAtBottom by rememberIsAtBottomState(listState)
 
     Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "Scroll Direction: $scrollDirection", modifier = Modifier.padding(8.dp)
-        )
         Text(
             text = if (isAtTop) "You're at the top!" else if (isAtBottom) "You're at the bottom!" else "Keep scrolling!",
             modifier = Modifier.padding(8.dp),
