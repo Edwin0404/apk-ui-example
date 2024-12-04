@@ -24,20 +24,8 @@ import androidx.compose.ui.unit.dp
 import com.codevex.compose.ui.components.LazyColumn
 import kotlinx.coroutines.flow.distinctUntilChanged
 
-@Composable
-@Preview
-fun LazyColumnScrollPosition(modifier: Modifier = Modifier) {
-    val listState = rememberLazyListState()
-    val scrollPosition by rememberScrollPosition(listState)
-
-    Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "Scroll Position: $scrollPosition",
-            modifier = Modifier.padding(16.dp)
-        )
-        LazyColumn(state = listState, modifier = Modifier.weight(1f))
-    }
-}
+enum class ScrollPosition { TOP, BOTTOM, MIDDLE }
+enum class ScrollDirection { UP, DOWN, IDLE }
 
 @Composable
 fun rememberScrollPosition(listState: LazyListState): State<ScrollPosition> {
@@ -52,22 +40,6 @@ fun rememberScrollPosition(listState: LazyListState): State<ScrollPosition> {
     }
 }
 
-enum class ScrollPosition {
-    TOP, BOTTOM, MIDDLE
-}
-
-@Composable
-@Preview
-fun LazyColumnFirstIndex(modifier: Modifier = Modifier) {
-    val listState = rememberLazyListState()
-    val index by rememberFirstVisibleIndex(listState)
-
-    Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("First visible index: $index", Modifier.padding(16.dp))
-        LazyColumn(state = listState, modifier = Modifier.weight(1f))
-    }
-}
-
 @Composable
 fun rememberFirstVisibleIndex(listState: LazyListState): State<Int> {
     val firstVisibleIndex = remember { mutableIntStateOf(0) }
@@ -78,38 +50,6 @@ fun rememberFirstVisibleIndex(listState: LazyListState): State<Int> {
     }
 
     return firstVisibleIndex
-}
-
-@Composable
-@Preview
-fun LazyColumnTopButton(modifier: Modifier = Modifier) {
-    val listState = rememberLazyListState()
-    val isAtTop by remember {
-        derivedStateOf {
-            listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0
-        }
-    }
-
-    Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.End) {
-        if (!isAtTop) {
-            Text("Scroll to top", Modifier.padding(16.dp))
-        }
-        LazyColumn(state = listState, modifier = Modifier.weight(1f))
-    }
-}
-
-@Composable
-@Preview
-fun LazyColumnScrollDirection(modifier: Modifier = Modifier) {
-    val listState = rememberLazyListState()
-    val scrollDirection by rememberScrollDirection(listState)
-
-    Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "Scroll Direction: $scrollDirection", modifier = Modifier.padding(16.dp)
-        )
-        LazyColumn(state = listState, modifier = Modifier.weight(1f))
-    }
 }
 
 @Composable
@@ -134,31 +74,6 @@ fun rememberScrollDirection(listState: LazyListState): State<ScrollDirection> {
     }
 
     return scrollDirection
-}
-
-enum class ScrollDirection {
-    UP, DOWN, IDLE
-}
-
-@Composable
-@Preview
-fun LazyColumnTopBottomDetection(modifier: Modifier = Modifier) {
-    val listState = rememberLazyListState()
-    val isAtTop by rememberIsAtTop(listState)
-    val isAtBottom by rememberIsAtBottom(listState)
-    val scrollDirection by rememberScrollDirection(listState)
-
-    Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "Scroll Direction: $scrollDirection", modifier = Modifier.padding(8.dp)
-        )
-        Text(
-            text = if (isAtTop) "You're at the top!" else if (isAtBottom) "You're at the bottom!" else "Keep scrolling!",
-            modifier = Modifier.padding(8.dp),
-            color = if (isAtTop || isAtBottom) Color.Green else Color.Gray
-        )
-        LazyColumn(state = listState, modifier = Modifier.weight(1f))
-    }
 }
 
 @Composable
@@ -186,4 +101,84 @@ fun rememberIsAtBottom(listState: LazyListState): State<Boolean> {
     }
 
     return isAtBottom
+}
+
+@Composable
+@Preview
+private fun LazyColumnScrollPosition(modifier: Modifier = Modifier) {
+    val listState = rememberLazyListState()
+    val scrollPosition by rememberScrollPosition(listState)
+
+    Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "Scroll Position: $scrollPosition",
+            modifier = Modifier.padding(16.dp)
+        )
+        LazyColumn(state = listState, modifier = Modifier.weight(1f))
+    }
+}
+
+@Composable
+@Preview
+private fun LazyColumnFirstIndex(modifier: Modifier = Modifier) {
+    val listState = rememberLazyListState()
+    val index by rememberFirstVisibleIndex(listState)
+
+    Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Text("First visible index: $index", Modifier.padding(16.dp))
+        LazyColumn(state = listState, modifier = Modifier.weight(1f))
+    }
+}
+
+@Composable
+@Preview
+private fun LazyColumnTopButton(modifier: Modifier = Modifier) {
+    val listState = rememberLazyListState()
+    val isAtTop by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0
+        }
+    }
+
+    Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.End) {
+        if (!isAtTop) {
+            Text("Scroll to top", Modifier.padding(16.dp))
+        }
+        LazyColumn(state = listState, modifier = Modifier.weight(1f))
+    }
+}
+
+@Composable
+@Preview
+private fun LazyColumnScrollDirection(modifier: Modifier = Modifier) {
+    val listState = rememberLazyListState()
+    val scrollDirection by rememberScrollDirection(listState)
+
+    Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "Scroll Direction: $scrollDirection", modifier = Modifier.padding(16.dp)
+        )
+        LazyColumn(state = listState, modifier = Modifier.weight(1f))
+    }
+}
+
+@Composable
+@Preview
+private fun LazyColumnTopBottomDetection(modifier: Modifier = Modifier) {
+    val listState = rememberLazyListState()
+    val isAtTop by rememberIsAtTop(listState)
+    val isAtBottom by rememberIsAtBottom(listState)
+    val scrollDirection by rememberScrollDirection(listState)
+
+    Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "Scroll Direction: $scrollDirection", modifier = Modifier.padding(8.dp)
+        )
+        Text(
+            text = if (isAtTop) "You're at the top!" else if (isAtBottom) "You're at the bottom!" else "Keep scrolling!",
+            modifier = Modifier.padding(8.dp),
+            color = if (isAtTop || isAtBottom) Color.Green else Color.Gray
+        )
+        LazyColumn(state = listState, modifier = Modifier.weight(1f))
+    }
 }
